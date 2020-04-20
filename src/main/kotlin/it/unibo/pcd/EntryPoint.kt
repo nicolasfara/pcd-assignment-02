@@ -8,11 +8,20 @@ fun main(args: Array<String>) {
     val userUrl = "https://it.wikipedia.org/wiki/Linguaggio_di_programmazione"
     sendGet(userUrl)
 }
+class Node {
+    private val title: String = ""
+    private val pageID :String =""
+    private val listLink : List<String> = emptyList()
 
+    override fun toString(): String {
+        return "Node(Title='$title')(pageId='$pageID'"
+    }
+
+}
 fun sendGet(userUrl: String) {
     val topic = userUrl.substringAfter("wiki/")
     val url = URL("https://it.wikipedia.org/w/api.php?action=parse&page=$topic&format=json&section=0&prop=links")
-
+    val sb = StringBuilder()
     with(url.openConnection() as HttpURLConnection) {
         requestMethod = "GET"  // optional default is GET
 
@@ -20,8 +29,10 @@ fun sendGet(userUrl: String) {
 
         inputStream.bufferedReader().use {
             it.lines().forEach { line ->
-                println(line)
+                sb.append(line);
             }
         }
     }
+    // with JsonObject take title,pageId ad list ok link in response
+
 }
