@@ -5,10 +5,7 @@ import com.google.gson.JsonObject
 import java.net.HttpURLConnection
 import java.net.URL
 
-class Node {
-    var title: String = ""
-    var pageID: String = ""
-    var link: MutableList<String> = mutableListOf()
+data class Node(var title: String = "", var pageID: String = "", val link: MutableList<String> = mutableListOf()) {
 
     override fun toString(): String {
         return "Node(title='$title', pageID='$pageID', link=$link)\n"
@@ -36,16 +33,14 @@ class Node {
     }
 
     private fun parseUrl(url: String): Node {
-        val node = Node()
         val firstLevel = Gson()
             .fromJson(url, JsonObject::class.java)
             .get("parse")
             .asJsonObject
-        node.title = firstLevel.get("title").toString()
-        node.pageID = firstLevel.asJsonObject.get("pageid").toString()
-        val arr = firstLevel.get("links").asJsonArray
 
-        arr.filter { it.asJsonObject.get("ns").asInt == 0 }
+        val node = Node(firstLevel.get("title").toString(), firstLevel.asJsonObject.get("pageid").toString())
+
+        firstLevel.get("links").asJsonArray.filter { it.asJsonObject.get("ns").asInt == 0 }
             .map { it.asJsonObject.get("*") }
             .forEach { node.link.add(it.toString()) }
 
