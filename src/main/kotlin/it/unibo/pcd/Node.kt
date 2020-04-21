@@ -1,6 +1,7 @@
 package it.unibo.pcd
 
 import com.google.gson.Gson
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import java.net.HttpURLConnection
 import java.net.URL
@@ -44,7 +45,12 @@ class Node {
         node.title = firstLevel.get("title").toString()
         node.pageID = firstLevel.asJsonObject.get("pageid").toString()
         val arr = firstLevel.get("links").asJsonArray
-        for (x in 0 until arr.size()) node.link.add(x, arr[x].asJsonObject.get("*").toString())
+        val a: JsonArray = JsonArray(arr.size())
+        for (x in 0 until arr.size())
+            if (arr[x].asJsonObject.get("ns").asInt == 0)
+                a.add(arr[x].asJsonObject.get("*").asString)
+        for (x in 0 until a.size())
+            node.link.add(x, a[x].toString())
         return node
     }
 }
