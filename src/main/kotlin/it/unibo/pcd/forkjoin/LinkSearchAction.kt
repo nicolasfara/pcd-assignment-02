@@ -5,18 +5,14 @@ import it.unibo.pcd.data.WikiPage
 import it.unibo.pcd.network.WikiCrawler
 import java.util.concurrent.RecursiveAction
 
-class LinkSearchAction(val graph: Graph<WikiPage>, val depth: Int = 5, val startURL: String) : RecursiveAction() {
+class LinkSearchAction(private val graph: Graph<WikiPage>, val depth: Int = 5, val startURL: String) : RecursiveAction() {
 
     private val crawler: WikiCrawler = WikiCrawler()
     private val tasks: MutableList<LinkSearchAction> = mutableListOf()
 
     override fun compute() {
-        println(depth)
         if (depth > 0) {
             createSubAction()
-            println("invoke")
-        } else {
-            println("Not invoke")
         }
         tasks.forEach{ it.join() }
     }
