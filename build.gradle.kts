@@ -13,8 +13,8 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-    implementation("com.google.code.gson:gson:2.8.6")
     implementation( "org.jsoup:jsoup:1.13.1")
+    implementation("org.jgrapht:jgrapht-core:1.4.0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
