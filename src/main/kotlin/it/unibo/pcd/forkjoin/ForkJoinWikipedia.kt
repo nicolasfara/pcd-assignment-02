@@ -1,6 +1,5 @@
 package it.unibo.pcd.forkjoin
 
-import it.unibo.pcd.data.Graph
 import it.unibo.pcd.data.WikiPage
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.SimpleDirectedGraph
@@ -24,5 +23,8 @@ fun main(args: Array<String>) {
     }
 
     //println(Graph.depthFirstTraversal(graph, graph.getAllVertex().find { it.entryNode } as WikiPage))
+
+
+
 }
 
