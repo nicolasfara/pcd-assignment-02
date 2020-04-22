@@ -1,14 +1,17 @@
 package it.unibo.pcd.forkjoin
 
-import it.unibo.pcd.data.Graph
 import it.unibo.pcd.data.WikiPage
+import org.jgrapht.Graphs
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.SimpleDirectedGraph
 import org.jgrapht.traverse.BreadthFirstIterator
+import tornadofx.App
+import tornadofx.Stylesheet.Companion.label
+import tornadofx.View
+
 import java.util.concurrent.ForkJoinPool
 
-
-fun main(args: Array<String>) {
+fun main()  {
 
     val graph = SimpleDirectedGraph<WikiPage, DefaultEdge>(DefaultEdge::class.java)
     val search = LinkSearchAction(graph, depth = 2, startURL = "https://it.wikipedia.org/wiki/Bertinoro")
@@ -23,6 +26,8 @@ fun main(args: Array<String>) {
         println(vertex.toString() + " depth: " + gIterator.getDepth(vertex))
     }
 
-    //println(Graph.depthFirstTraversal(graph, graph.getAllVertex().find { it.entryNode } as WikiPage))
+    graph.vertexSet().forEach {
+        println("Links of ${it.baseURL} = " + Graphs.successorListOf(graph, it) + "\n")
+    }
 }
 

@@ -19,24 +19,25 @@ class LinkSearchAction(private val graph: SimpleDirectedGraph<WikiPage, DefaultE
     }
 
     private fun createSubAction() {
-        var baseVertex = graph.vertexSet().find { it.baseURL == startURL }
+        var currentVertex = graph.vertexSet().find { it.baseURL == startURL }
 
-        if (baseVertex == null)
-            baseVertex = WikiPage(startURL, crawler.getDescriptionFromPage(startURL), entryNode = true)
+        // If no vertex are present in the graph, we create the entry point
+        if (currentVertex == null)
+            currentVertex = WikiPage(startURL, crawler.getDescriptionFromPage(startURL), entryNode = true)
 
-        baseVertex.links.addAll(crawler.getLinksFromAbstract(startURL)) //Create all links inside the page
-        graph.addVertex(baseVertex) // Add the page (vertex) to the graph
+        currentVertex.links.addAll(crawler.getLinksFromAbstract(startURL)) // Create all links inside the page
+        graph.addVertex(currentVertex) // Add the page (vertex) to the graph
 
-        baseVertex.links.forEach {
+        currentVertex.links.forEach {
             val linkVertex = WikiPage(it, crawler.getDescriptionFromPage(it), mutableSetOf())
             // If the page is already present will not be add
             if (!graph.vertexSet().map { e -> e.baseURL }.contains(linkVertex.baseURL)) {
                 graph.addVertex(linkVertex)
-                graph.addEdge(baseVertex, linkVertex)
+                graph.addEdge(currentVertex, linkVertex)
             }
         }
 
-        baseVertex.links.forEach {
+        currentVertex.links.forEach {
             val lsa = LinkSearchAction(graph, depth-1, it)
             tasks.add(lsa)
             lsa.fork()

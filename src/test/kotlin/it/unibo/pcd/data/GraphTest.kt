@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Assertions.*
 
 internal class GraphTest {
 
-    private val graph: Graph<String> = Graph()
     private val graph2 = SimpleDirectedGraph<String, DefaultEdge>(DefaultEdge::class.java)
 
     @Test
