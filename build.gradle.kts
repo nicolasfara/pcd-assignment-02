@@ -15,6 +15,8 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation( "org.jsoup:jsoup:1.13.1")
     implementation("org.jgrapht:jgrapht-core:1.4.0")
+    implementation("org.javabits.jgrapht:jgrapht-ext:0.9.1")
+    implementation("org.tinyjee.jgraphx:jgraphx:3.4.1.3")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")

@@ -10,13 +10,11 @@ import java.util.concurrent.RecursiveAction
 class LinkSearchAction(private val graph: SimpleDirectedGraph<WikiPage, DefaultEdge>, val depth: Int = 5, val startURL: String) : RecursiveAction() {
 
     private val crawler: WikiCrawler = WikiCrawler()
-    private val tasks: MutableList<LinkSearchAction> = Collections.synchronizedList(mutableListOf())
 
     override fun compute() {
         if (depth > 0) {
             createSubAction()
         }
-        tasks.forEach { it.join() }
     }
 
     private fun createSubAction() {
@@ -38,9 +36,11 @@ class LinkSearchAction(private val graph: SimpleDirectedGraph<WikiPage, DefaultE
             }
         }
 
+        val l = Collections.synchronizedList(mutableListOf<LinkSearchAction>())
+
         currentVertex.links.forEach {
             val lsa = LinkSearchAction(graph, depth-1, it)
-            tasks.add(lsa)
+            l.add(lsa)
             lsa.fork()
         }
     }
