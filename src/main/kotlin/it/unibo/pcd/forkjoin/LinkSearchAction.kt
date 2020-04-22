@@ -4,12 +4,13 @@ import it.unibo.pcd.data.WikiPage
 import it.unibo.pcd.network.WikiCrawler
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.SimpleDirectedGraph
+import java.util.*
 import java.util.concurrent.RecursiveAction
 
 class LinkSearchAction(private val graph: SimpleDirectedGraph<WikiPage, DefaultEdge>, val depth: Int = 5, val startURL: String) : RecursiveAction() {
 
     private val crawler: WikiCrawler = WikiCrawler()
-    private val tasks: MutableList<LinkSearchAction> = mutableListOf()
+    private val tasks: MutableList<LinkSearchAction> = Collections.synchronizedList(mutableListOf())
 
     override fun compute() {
         if (depth > 0) {
