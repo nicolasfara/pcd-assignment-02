@@ -1,13 +1,14 @@
-package it.unibo.pcd
+package it.unibo.pcd.data
 
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.IllegalArgumentException
 import kotlin.collections.HashMap
 import kotlin.collections.HashSet
 
 class Graph<T> {
 
-    private val adjacencyMap: HashMap<T, HashSet<T>> = HashMap()
+    private val adjacencyMap: ConcurrentHashMap<T, HashSet<T>> = ConcurrentHashMap()
 
     fun isVertexPresent(vertex: T): Boolean {
         return adjacencyMap.values.flatten().contains(vertex)
@@ -29,6 +30,10 @@ class Graph<T> {
             true -> addEdge(sourceVertex, destinationVertex)
             else -> throw IllegalArgumentException("The vertex `$destinationVertex` is already present in the graph")
         }
+    }
+
+    fun getAllVertex(): Set<T> {
+        return adjacencyMap.values.flatten().toSet()
     }
 
     /**
