@@ -5,9 +5,6 @@ import org.jgrapht.Graphs
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.SimpleDirectedGraph
 import org.jgrapht.traverse.BreadthFirstIterator
-import tornadofx.App
-import tornadofx.Stylesheet.Companion.label
-import tornadofx.View
 
 import java.util.concurrent.ForkJoinPool
 

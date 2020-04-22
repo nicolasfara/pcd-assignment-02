@@ -1,8 +1,12 @@
 package it.unibo.pcd.network
 
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import java.net.HttpURLConnection
+import java.net.URL
 
 class WikiCrawler {
 
@@ -15,8 +19,8 @@ class WikiCrawler {
     }
 
     fun getDescriptionFromPage(pageURL: String): String {
-        /*val topic = pageURL.substringAfter("wiki/")
-        val urlGET = URL("https://en.wikipedia.org/w/api.php?action=parse&page=$topic&format=json&prop=description")
+
+        val urlGET = URL("https://it.wikipedia.org/api/rest_v1/page/summary/"+pageURL.substringAfter("wiki/"))
         val sBuilder = StringBuilder()
         with(urlGET.openConnection() as HttpURLConnection) {
             requestMethod = "GET"  // optional default is GET
@@ -27,8 +31,10 @@ class WikiCrawler {
                 }
             }
         }
-        return sBuilder.toString()*/
-        return "empty"
+        val str = sBuilder.toString()
+
+       return Gson()
+            .fromJson(str, JsonObject::class.java)["extract"].asString
     }
 
     private fun normalizeUrlForApi(url: String): String {
