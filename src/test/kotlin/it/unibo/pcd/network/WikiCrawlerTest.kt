@@ -6,12 +6,11 @@ import org.junit.jupiter.api.Test
 internal class WikiCrawlerTest {
 
     private val crawler: WikiCrawler = WikiCrawler()
-    private val baseURL = "https://it.wikipedia.org/wiki/Linguaggio_di_programmazione"
+    private val baseURL = "https://it.wikipedia.org/api/rest_v1/page/html/Bertinoro"
 
     @Test
-    fun apiTest() {
-        print(crawler.getLinksFromAbstract(baseURL))
-        assertEquals(true, true)
+    fun getLinksFromAbstractTest() {
+        assertEquals(5, crawler.getLinksFromAbstract(baseURL).size)
     }
 
     @Test
