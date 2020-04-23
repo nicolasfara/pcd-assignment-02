@@ -11,7 +11,7 @@ import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.SimpleDirectedGraph
 import tornadofx.*
 
-class MainView : View("Wiki Link Search") {
+class MainView : View("Wiki Link Search ") {
     override val root: BorderPane by fxml("/MainView.fxml")
     private val graphPane: StackPane by fxid()
     private val wikiUrl: TextField by fxid()

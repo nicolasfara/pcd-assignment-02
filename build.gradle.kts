@@ -24,6 +24,9 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 }
 
+application {
+    mainClassName = "it.unibo.MainView"
+}
 
 javafx {
     version = "13"
