@@ -27,7 +27,7 @@ class LinkSearchAction(private val graph: SimpleDirectedGraph<WikiPage, DefaultE
 
             currentVertex.links.addAll(crawler.getLinksFromAbstract(startURL)) // Create all links inside the page
             graph.addVertex(currentVertex) // Add the page (vertex) to the graph
-
+            if(!currentVertex.links.isEmpty() )
             currentVertex.links.forEach {
                 val linkVertex = WikiPage(it, crawler.getDescriptionFromPage(it), mutableSetOf())
                 // If the page is already present will not be add

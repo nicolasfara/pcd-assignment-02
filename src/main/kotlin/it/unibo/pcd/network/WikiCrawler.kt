@@ -2,6 +2,7 @@ package it.unibo.pcd.network
 
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import org.jsoup.HttpStatusException
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -14,9 +15,14 @@ class WikiCrawler {
     private val baseWikiUrl = "https://it.wikipedia.org/wiki/"
 
     fun getLinksFromAbstract(pageURL: String) : Collection<String> {
-        val doc: Document = Jsoup.connect(normalizeUrlForApi(pageURL)).get()
-        val newsHeadlines: Elements = doc.select("section:first-child p > a:not([href*=#])")
-        return newsHeadlines.map { baseWikiUrl + it.attr("title").replace(" ", "_") }
+        try{
+         val doc: Document = Jsoup.connect(normalizeUrlForApi(pageURL)).get()
+            val newsHeadlines: Elements = doc.select("section:first-child p > a:not([href*=#])")
+            return newsHeadlines.map { baseWikiUrl + it.attr("title").replace(" ", "_") }
+        }catch (ex: HttpStatusException){
+            println("Url not exist")
+            return emptyList()
+        }
     }
 
     fun getDescriptionFromPage(pageURL: String): String {
