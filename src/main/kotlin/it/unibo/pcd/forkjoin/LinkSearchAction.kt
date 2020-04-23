@@ -28,11 +28,13 @@ class LinkSearchAction(private val graph: SimpleDirectedGraph<WikiPage, DefaultE
         graph.addVertex(currentVertex) // Add the page (vertex) to the graph
 
         currentVertex.links.forEach {
-            val linkVertex = WikiPage(it, crawler.getDescriptionFromPage(it), mutableSetOf())
-            // If the page is already present will not be add
-            if (!graph.vertexSet().map { e -> e.baseURL }.contains(linkVertex.baseURL)) {
-                graph.addVertex(linkVertex)
-                graph.addEdge(currentVertex, linkVertex)
+            if (it != "URL not found") {
+                val linkVertex = WikiPage(it, crawler.getDescriptionFromPage(it), mutableSetOf())
+                // If the page is already present will not be add
+                if (!graph.vertexSet().map { e -> e.baseURL }.contains(linkVertex.baseURL)) {
+                    graph.addVertex(linkVertex)
+                    graph.addEdge(currentVertex, linkVertex)
+                }
             }
         }
 

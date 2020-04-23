@@ -5,6 +5,7 @@ import com.google.gson.JsonObject
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import java.io.FileNotFoundException
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -19,22 +20,14 @@ class WikiCrawler {
     }
 
     fun getDescriptionFromPage(pageURL: String): String {
-
-        val urlGET = URL("https://it.wikipedia.org/api/rest_v1/page/summary/"+pageURL.substringAfter("wiki/"))
-        val sBuilder = StringBuilder()
-        with(urlGET.openConnection() as HttpURLConnection) {
-            requestMethod = "GET"  // optional default is GET
-            //println("\nSent 'GET' request to URL : $urlGET; Response Code : $responseCode")
-            inputStream.bufferedReader().use {
-                it.lines().forEach { line ->
-                    sBuilder.append(line);
-                }
-            }
+        var str = ""
+        try {
+            str = URL("https://it.wikipedia.org/api/rest_v1/page/summary/" + pageURL.substringAfter("wiki/")).readText()
+        } catch (ex: FileNotFoundException) {
+            println("Url not found")
+            return "URL not found"
         }
-        val str = sBuilder.toString()
-
-       return Gson()
-            .fromJson(str, JsonObject::class.java)["extract"].asString
+        return Gson().fromJson(str, JsonObject::class.java)["extract"].asString
     }
 
     private fun normalizeUrlForApi(url: String): String {

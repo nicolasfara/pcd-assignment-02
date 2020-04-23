@@ -10,6 +10,7 @@ import org.jgrapht.Graphs
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.SimpleDirectedGraph
 import tornadofx.*
+import java.util.concurrent.ForkJoinPool
 
 class MainView : View("Wiki Link Search ") {
     override val root: BorderPane by fxml("/MainView.fxml")
@@ -27,7 +28,8 @@ class MainView : View("Wiki Link Search ") {
         val wikiSearch = WikiSearch(depth.text.toInt(), wikiUrl.text)
         wikiSearch.search({ depth: Int, url:String ->
             val graph = SimpleDirectedGraph<WikiPage, DefaultEdge>(DefaultEdge::class.java)
-            LinkSearchAction(graph, depth, url).invoke()
+            val fjp = ForkJoinPool.commonPool()
+            fjp.invoke(LinkSearchAction(graph, depth, url))
             graph
         }, {
             Platform.runLater {
