@@ -7,7 +7,7 @@ import org.jgrapht.graph.SimpleDirectedGraph
 import java.util.*
 import java.util.concurrent.RecursiveAction
 
-class LinkSearchAction(private val graph: SimpleDirectedGraph<WikiPage, DefaultEdge>, val depth: Int = 5, val startURL: String) : RecursiveAction() {
+class LinkSearchAction(private val graph: SimpleDirectedGraph<WikiPage, DefaultEdge>, val depth: Int = 5, val startURL: String): RecursiveAction() {
 
     private val crawler: WikiCrawler = WikiCrawler()
 

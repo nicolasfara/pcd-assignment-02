@@ -1,6 +1,7 @@
-package it.unibo.pcd.forkjoin
+package it.unibo.pcd
 
 import it.unibo.pcd.data.WikiPage
+import it.unibo.pcd.forkjoin.LinkSearchAction
 import javafx.application.Platform
 import javafx.scene.control.*
 import javafx.scene.layout.BorderPane
@@ -9,9 +10,8 @@ import org.jgrapht.Graphs
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.SimpleDirectedGraph
 import tornadofx.*
-import java.util.concurrent.ForkJoinPool
 
-class MainView : View("My View") {
+class MainView : View("Wiki Link Search") {
     override val root: BorderPane by fxml("/MainView.fxml")
     private val graphPane: StackPane by fxid()
     private val wikiUrl: TextField by fxid()
@@ -24,22 +24,23 @@ class MainView : View("My View") {
         graphPane.isDisable = true
         searchBtn.isDisable = true
 
-        Thread {
+        val wikiSearch = WikiSearch(depth.text.toInt(), wikiUrl.text)
+        wikiSearch.search({ depth: Int, url:String ->
             val graph = SimpleDirectedGraph<WikiPage, DefaultEdge>(DefaultEdge::class.java)
-            val search = LinkSearchAction(graph, depth = depth.text.toInt(), startURL = wikiUrl.text)
-            val commonPool = ForkJoinPool()
-            commonPool.invoke(search)
-            val treeItem: TreeItem<String> = TreeItem()
-            graphToTree(graph, graph.vertexSet().first { it.entryNode }, treeItem)
-            val treeView: TreeView<String> = TreeView(treeItem)
-            treeView.isShowRoot = false
+            LinkSearchAction(graph, depth, url).invoke()
+            graph
+        }, {
             Platform.runLater {
+                val treeItem: TreeItem<String> = TreeItem()
+                graphToTree(it, it.vertexSet().first { el -> el.entryNode }, treeItem)
+                val treeView: TreeView<String> = TreeView(treeItem)
+                treeView.isShowRoot = false
                 graphPane.children.add(treeView)
                 progress.isVisible = false
                 graphPane.isDisable = false
                 searchBtn.isDisable = false
             }
-        }.start()
+        })
     }
 
     private fun graphToTree(graph: SimpleDirectedGraph<WikiPage, DefaultEdge>, vertex: WikiPage, parent: TreeItem<String>) {
