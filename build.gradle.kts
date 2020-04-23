@@ -1,5 +1,7 @@
 plugins {
     kotlin("jvm") version "1.3.72"
+    id("application")
+    id("org.openjfx.javafxplugin") version "0.0.8"
 }
 
 group = "it.unibo.pcd"
@@ -15,12 +17,17 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation( "org.jsoup:jsoup:1.13.1")
     implementation("org.jgrapht:jgrapht-core:1.4.0")
-    implementation("org.javabits.jgrapht:jgrapht-ext:0.9.1")
-    implementation("org.tinyjee.jgraphx:jgraphx:3.4.1.3")
+    implementation("com.google.code.gson:gson:2.8.6")
+    implementation("no.tornado:tornadofx:1.7.20")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
-    implementation("com.google.code.gson:gson:2.8.6")
+}
+
+
+javafx {
+    version = "13"
+    modules = listOf("javafx.controls", "javafx.fxml")
 }
 
 tasks.withType<Test> {
@@ -32,9 +39,9 @@ tasks.withType<Test> {
 
 tasks {
     compileKotlin {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = "13"
     }
     compileTestKotlin {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = "13"
     }
 }

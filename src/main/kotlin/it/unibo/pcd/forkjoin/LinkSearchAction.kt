@@ -42,6 +42,7 @@ class LinkSearchAction(private val graph: SimpleDirectedGraph<WikiPage, DefaultE
             val lsa = LinkSearchAction(graph, depth-1, it)
             l.add(lsa)
             lsa.fork()
+            lsa.join()
         }
     }
 }
