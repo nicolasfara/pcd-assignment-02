@@ -15,18 +15,19 @@ class WikiCrawler {
     private val baseWikiUrl = "https://it.wikipedia.org/wiki/"
 
     fun getLinksFromAbstract(pageURL: String) : Collection<String> {
+        var headlines = emptyList<String>()
         try{
-         val doc: Document = Jsoup.connect(normalizeUrlForApi(pageURL)).get()
+            val doc: Document = Jsoup.connect(normalizeUrlForApi(pageURL)).get()
             val newsHeadlines: Elements = doc.select("section:first-child p > a:not([href*=#])")
-            return newsHeadlines.map { baseWikiUrl + it.attr("title").replace(" ", "_") }
-        }catch (ex: HttpStatusException){
+            headlines = newsHeadlines.map { baseWikiUrl + it.attr("title").replace(" ", "_") }
+        } catch (ex: HttpStatusException){
             println("Url not exist")
-            return emptyList()
         }
+        return headlines
     }
 
     fun getDescriptionFromPage(pageURL: String): String {
-        var str = ""
+        val str: String
         try {
             str = URL("https://it.wikipedia.org/api/rest_v1/page/summary/" + pageURL.substringAfter("wiki/")).readText()
         } catch (ex: FileNotFoundException) {

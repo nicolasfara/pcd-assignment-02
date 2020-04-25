@@ -6,7 +6,7 @@ import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.SimpleDirectedGraph
 import java.util.concurrent.RecursiveAction
 
-class LinkSearchAction(private val graph: SimpleDirectedGraph<WikiPage, DefaultEdge>, val depth: Int = 5, val startURL: String): RecursiveAction() {
+class LinkSearchAction(private val graph: SimpleDirectedGraph<WikiPage, DefaultEdge>, private val depth: Int = 5, private val startURL: String): RecursiveAction() {
 
     private val crawler: WikiCrawler = WikiCrawler()
 
@@ -27,13 +27,14 @@ class LinkSearchAction(private val graph: SimpleDirectedGraph<WikiPage, DefaultE
 
             currentVertex.links.addAll(crawler.getLinksFromAbstract(startURL)) // Create all links inside the page
             graph.addVertex(currentVertex) // Add the page (vertex) to the graph
-            if(!currentVertex.links.isEmpty() )
-            currentVertex.links.forEach {
-                val linkVertex = WikiPage(it, crawler.getDescriptionFromPage(it), mutableSetOf())
-                // If the page is already present will not be add
-                if (!graph.vertexSet().map { e -> e.baseURL }.contains(linkVertex.baseURL)) {
-                    graph.addVertex(linkVertex)
-                    graph.addEdge(currentVertex, linkVertex)
+            if (currentVertex.links.isNotEmpty()) {
+                currentVertex.links.forEach {
+                    val linkVertex = WikiPage(it, crawler.getDescriptionFromPage(it), mutableSetOf())
+                    // If the page is already present will not be add
+                    if (!graph.vertexSet().map { e -> e.baseURL }.contains(linkVertex.baseURL)) {
+                        graph.addVertex(linkVertex)
+                        graph.addEdge(currentVertex, linkVertex)
+                    }
                 }
             }
 

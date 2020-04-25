@@ -15,6 +15,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.4")
     implementation( "org.jsoup:jsoup:1.13.1")
     implementation("org.jgrapht:jgrapht-core:1.4.0")
     implementation("com.google.code.gson:gson:2.8.6")
