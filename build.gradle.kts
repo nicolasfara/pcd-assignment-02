@@ -21,6 +21,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.8.6")
     implementation("no.tornado:tornadofx:1.7.20")
     implementation("io.reactivex.rxjava3:rxkotlin:3.0.0")
+    implementation("io.vertx:vertx-core:3.9.0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
