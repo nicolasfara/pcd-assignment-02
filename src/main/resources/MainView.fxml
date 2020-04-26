@@ -20,6 +20,7 @@
             <Button fx:id="searchBtn" text="Search" onAction="#search"/>
             <TextField fx:id="wikiUrl" text="Wiki"/>
             <TextField fx:id="depth" text="Depth" />
+            <ComboBox fx:id="combo" />
             <ProgressIndicator fx:id="progress" visible="false" prefHeight="20"/>
         </HBox>
     </top>
