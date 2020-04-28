@@ -1,7 +1,7 @@
-package it.unibo.pcd.presenter.coroutines
+package it.unibo.pcd.presenter.crawler.coroutines
 
 import it.unibo.pcd.model.WikiPage
-import it.unibo.pcd.presenter.network.WikiCrawler
+import it.unibo.pcd.presenter.crawler.network.WikiCrawler
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope

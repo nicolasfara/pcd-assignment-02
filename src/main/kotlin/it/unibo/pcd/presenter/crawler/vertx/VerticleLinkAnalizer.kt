@@ -1,9 +1,9 @@
-package it.unibo.pcd.presenter.vertx
+package it.unibo.pcd.presenter.crawler.vertx
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.logging.Logger
 import io.vertx.core.logging.LoggerFactory
 import it.unibo.pcd.model.WikiPage
-import it.unibo.pcd.presenter.network.WikiCrawler
+import it.unibo.pcd.presenter.crawler.network.WikiCrawler
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.SimpleDirectedGraph
 

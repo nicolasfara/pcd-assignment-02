@@ -1,4 +1,4 @@
-package it.unibo.pcd.presenter.network
+package it.unibo.pcd.presenter.crawler.network
 
 import com.google.gson.Gson
 import com.google.gson.JsonObject

@@ -1,7 +1,7 @@
-package it.unibo.pcd.presenter.forkjoin
+package it.unibo.pcd.presenter.crawler.forkjoin
 
 import it.unibo.pcd.model.WikiPage
-import it.unibo.pcd.presenter.network.WikiCrawler
+import it.unibo.pcd.presenter.crawler.network.WikiCrawler
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.SimpleDirectedGraph
 import java.util.concurrent.RecursiveAction

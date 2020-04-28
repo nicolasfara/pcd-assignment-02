@@ -1,6 +1,6 @@
 package it.unibo.pcd.network
 
-import it.unibo.pcd.presenter.network.WikiCrawler
+import it.unibo.pcd.presenter.crawler.network.WikiCrawler
 import org.junit.jupiter.api.Test
 
 internal class WikiCrawlerTest {

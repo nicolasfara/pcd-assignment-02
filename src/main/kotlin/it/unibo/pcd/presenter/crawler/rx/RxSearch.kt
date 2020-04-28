@@ -1,9 +1,9 @@
-package it.unibo.pcd.presenter.rx
+package it.unibo.pcd.presenter.crawler.rx
 
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import it.unibo.pcd.model.WikiPage
-import it.unibo.pcd.presenter.network.WikiCrawler
+import it.unibo.pcd.presenter.crawler.network.WikiCrawler
 
 class RxSearch {
 

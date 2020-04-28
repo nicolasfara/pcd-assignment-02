@@ -2,8 +2,8 @@ package it.unibo.pcd.presenter
 
 import it.unibo.pcd.contract.Contract
 import it.unibo.pcd.model.WikiPage
-import it.unibo.pcd.presenter.coroutines.CoroutineSearch
-import it.unibo.pcd.presenter.forkjoin.LinkSearchAction
+import it.unibo.pcd.presenter.crawler.coroutines.CoroutineSearch
+import it.unibo.pcd.presenter.crawler.forkjoin.LinkSearchAction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,7 +20,8 @@ class CrawlerPresenter: Contract.Presenter {
         when (strategy) {
             SearchStrategy.COROUTINES -> {
                 CoroutineScope(Dispatchers.IO).launch {
-                    val graph = CoroutineSearch().searchLinks(url, depth)
+                    val graph = CoroutineSearch()
+                        .searchLinks(url, depth)
                     view.displaySearchResult(graph)
                 }
             }

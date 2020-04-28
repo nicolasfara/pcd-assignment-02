@@ -1,6 +1,6 @@
 package it.unibo.pcd.rx
 
-import it.unibo.pcd.presenter.rx.RxSearch
+import it.unibo.pcd.presenter.crawler.rx.RxSearch
 import org.junit.jupiter.api.Test
 
 internal class RxSearchTest {
