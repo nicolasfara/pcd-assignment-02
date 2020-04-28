@@ -1,18 +1,13 @@
 package it.unibo.pcd.presenter
 
-import io.reactivex.rxjava3.core.Observable
-import it.unibo.pcd.WikiSearch
 import it.unibo.pcd.contract.Contract
 import it.unibo.pcd.model.WikiPage
 import it.unibo.pcd.presenter.coroutines.CoroutineSearch
 import it.unibo.pcd.presenter.forkjoin.LinkSearchAction
-import it.unibo.pcd.presenter.rx.RxSearch
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.jgrapht.Graph
 import org.jgrapht.graph.DefaultEdge
-import org.jgrapht.graph.DirectedAcyclicGraph
 import org.jgrapht.graph.SimpleDirectedGraph
 import java.util.concurrent.ForkJoinPool
 
