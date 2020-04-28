@@ -13,7 +13,7 @@ fun main(args: Array<String>) {
     val graph = SimpleDirectedGraph<WikiPage, DefaultEdge>(DefaultEdge::class.java)
     val myVerticle  = VerticleLinkAnalizer(graph,depth,start)
     var deploymentID = ""
-    val options = DeploymentOptions().setWorker(true)
+    val options = DeploymentOptions().setWorker(true).setWorkerPoolName("VX").setWorkerPoolSize(8)
     vertx.deployVerticle(myVerticle,options){res ->
         if (res.succeeded()) {
             System.out.println("Deployment id is: " + res.result())

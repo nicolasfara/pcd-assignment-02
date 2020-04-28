@@ -28,8 +28,8 @@ class VerticleLinkAnalizer(
     }
 
     private fun traverseLink(rootNode: WikiPage, depth: Int): SimpleDirectedGraph<WikiPage, DefaultEdge> {
-
         if (depth > 0) {
+            println(Thread.currentThread().name)
             graph.addVertex(rootNode)
             if (rootNode.links.isNotEmpty()) {
                 // Call some blocking API that takes a significant amount of time to return
@@ -51,6 +51,5 @@ class VerticleLinkAnalizer(
         }
         return graph
     }
-
 }
 

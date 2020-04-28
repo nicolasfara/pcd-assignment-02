@@ -1,8 +1,11 @@
 package it.unibo.pcd
 
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import it.unibo.pcd.coroutines.CoroutineSearch
 import it.unibo.pcd.data.WikiPage
 import it.unibo.pcd.forkjoin.LinkSearchAction
+import it.unibo.pcd.rx.RxSearch
 import javafx.application.Platform
 import javafx.scene.control.*
 import javafx.scene.layout.BorderPane
@@ -11,6 +14,7 @@ import kotlinx.coroutines.*
 import org.jgrapht.Graph
 import org.jgrapht.Graphs
 import org.jgrapht.graph.DefaultEdge
+import org.jgrapht.graph.DirectedAcyclicGraph
 import org.jgrapht.graph.SimpleDirectedGraph
 import tornadofx.*
 import java.util.concurrent.ForkJoinPool
@@ -61,7 +65,27 @@ class MainView : View("Wiki Link Search ") {
                     }
                 })
             }
-            SearchStrategy.REACTIVE -> println("Reactive")
+            SearchStrategy.REACTIVE -> {
+                val graph = DirectedAcyclicGraph<WikiPage, DefaultEdge>(DefaultEdge::class.java)
+                val rxSearch = RxSearch()
+                /*rxSearch.search(wikiUrl.text, depth.text.toInt())
+                    .subscribeOn(Schedulers.computation())
+                    .subscribe {
+                            /*graph.addVertex(it.first)
+                            graph.addVertex(it.second)
+                            graph.addEdge(it.first, it.second)*/
+                        println(it)
+                        /*Platform.runLater {
+                            val treeView = buildTreeView(graph)
+                            treeView.isShowRoot = false
+                            graphPane.children.add(treeView)
+                            onFinishSearch()
+                        }*/
+                    }
+                println("Finish")*/
+                val obs = Observable.range(0, 1_000_000)
+
+            }
             SearchStrategy.VERTX -> println("Vertx")
             else -> println("Fuck")
         }
