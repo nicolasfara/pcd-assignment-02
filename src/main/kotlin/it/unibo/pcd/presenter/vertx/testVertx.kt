@@ -1,8 +1,8 @@
-package it.unibo.pcd.vertx
+package it.unibo.pcd.presenter.vertx
 import io.vertx.core.AsyncResult
 import io.vertx.core.DeploymentOptions
 import io.vertx.core.Vertx
-import it.unibo.pcd.data.WikiPage
+import it.unibo.pcd.model.WikiPage
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.SimpleDirectedGraph
 
@@ -11,7 +11,7 @@ fun main(args: Array<String>) {
     val depth = 2
     val start = "https://it.wikipedia.org/wiki/Lingua_italiana"
     val graph = SimpleDirectedGraph<WikiPage, DefaultEdge>(DefaultEdge::class.java)
-    val myVerticle  = VerticleLinkAnalizer(graph,depth,start)
+    val myVerticle  = VerticleLinkAnalizer(graph, depth, start)
     var deploymentID = ""
     val options = DeploymentOptions().setWorker(true).setWorkerPoolName("VX").setWorkerPoolSize(8)
     vertx.deployVerticle(myVerticle,options){res ->

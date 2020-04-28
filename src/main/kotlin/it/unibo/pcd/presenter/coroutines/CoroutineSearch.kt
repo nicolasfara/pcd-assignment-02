@@ -1,7 +1,7 @@
-package it.unibo.pcd.coroutines
+package it.unibo.pcd.presenter.coroutines
 
-import it.unibo.pcd.data.WikiPage
-import it.unibo.pcd.network.WikiCrawler
+import it.unibo.pcd.model.WikiPage
+import it.unibo.pcd.presenter.network.WikiCrawler
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -11,7 +11,8 @@ import org.jgrapht.graph.DirectedAcyclicGraph
 class CoroutineSearch {
 
     private lateinit var graph: DirectedAcyclicGraph<WikiPage, DefaultEdge>
-    private val crawler: WikiCrawler = WikiCrawler()
+    private val crawler: WikiCrawler =
+        WikiCrawler()
 
     suspend fun searchLinks(url: String, depth: Int): DirectedAcyclicGraph<WikiPage, DefaultEdge> {
         graph = DirectedAcyclicGraph(DefaultEdge::class.java)

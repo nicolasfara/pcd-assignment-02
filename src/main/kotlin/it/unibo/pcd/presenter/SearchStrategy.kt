@@ -1,4 +1,4 @@
-package it.unibo.pcd
+package it.unibo.pcd.presenter
 
 enum class SearchStrategy(val value: String) {
     FORK_JOIN("Fork Join"),

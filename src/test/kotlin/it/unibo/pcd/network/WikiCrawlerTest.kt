@@ -1,11 +1,12 @@
 package it.unibo.pcd.network
 
-import org.junit.jupiter.api.Assertions.*
+import it.unibo.pcd.presenter.network.WikiCrawler
 import org.junit.jupiter.api.Test
 
 internal class WikiCrawlerTest {
 
-    private val crawler: WikiCrawler = WikiCrawler()
+    private val crawler: WikiCrawler =
+        WikiCrawler()
     private val baseURL = "https://it.wikipedia.org/api/rest_v1/page/html/Bertinoro"
 
     @Test

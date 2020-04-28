@@ -1,4 +1,4 @@
-package it.unibo.pcd.coroutines
+package it.unibo.pcd.presenter.coroutines
 
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test

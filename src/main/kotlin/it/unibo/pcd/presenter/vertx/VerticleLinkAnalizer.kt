@@ -1,9 +1,9 @@
-package it.unibo.pcd.vertx
+package it.unibo.pcd.presenter.vertx
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.logging.Logger
 import io.vertx.core.logging.LoggerFactory
-import it.unibo.pcd.data.WikiPage
-import it.unibo.pcd.network.WikiCrawler
+import it.unibo.pcd.model.WikiPage
+import it.unibo.pcd.presenter.network.WikiCrawler
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.SimpleDirectedGraph
 
@@ -13,7 +13,8 @@ class VerticleLinkAnalizer(
     val startURL: String
 ) : AbstractVerticle() {
     private val log: Logger = LoggerFactory.getLogger(VerticleLinkAnalizer::class.java)
-    private val crawler: WikiCrawler = WikiCrawler()
+    private val crawler: WikiCrawler =
+        WikiCrawler()
     override fun start() {
         graph = SimpleDirectedGraph(DefaultEdge::class.java)
         val rootNode = WikiPage(

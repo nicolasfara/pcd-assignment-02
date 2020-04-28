@@ -1,12 +1,9 @@
-package it.unibo.pcd.data
+package it.unibo.pcd.model
 
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.SimpleDirectedGraph
-import org.jgrapht.graph.SimpleGraph
 import org.jgrapht.traverse.BreadthFirstIterator
 import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
 
 internal class GraphTest {
 

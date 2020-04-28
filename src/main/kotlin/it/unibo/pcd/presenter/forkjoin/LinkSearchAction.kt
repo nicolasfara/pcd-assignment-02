@@ -1,14 +1,15 @@
-package it.unibo.pcd.forkjoin
+package it.unibo.pcd.presenter.forkjoin
 
-import it.unibo.pcd.data.WikiPage
-import it.unibo.pcd.network.WikiCrawler
+import it.unibo.pcd.model.WikiPage
+import it.unibo.pcd.presenter.network.WikiCrawler
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.SimpleDirectedGraph
 import java.util.concurrent.RecursiveAction
 
 class LinkSearchAction(private val graph: SimpleDirectedGraph<WikiPage, DefaultEdge>, private val depth: Int = 5, private val startURL: String): RecursiveAction() {
 
-    private val crawler: WikiCrawler = WikiCrawler()
+    private val crawler: WikiCrawler =
+        WikiCrawler()
 
     override fun compute() {
         if (depth > 0) {

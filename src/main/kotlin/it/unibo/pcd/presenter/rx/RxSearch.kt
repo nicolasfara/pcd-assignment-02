@@ -1,17 +1,14 @@
-package it.unibo.pcd.rx
+package it.unibo.pcd.presenter.rx
 
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.ObservableEmitter
-import io.reactivex.rxjava3.internal.subscribers.SubscriberResourceWrapper
 import io.reactivex.rxjava3.schedulers.Schedulers
-import it.unibo.pcd.data.WikiPage
-import it.unibo.pcd.network.WikiCrawler
-import org.reactivestreams.Subscriber
-import java.util.concurrent.Flow
+import it.unibo.pcd.model.WikiPage
+import it.unibo.pcd.presenter.network.WikiCrawler
 
 class RxSearch {
 
-    private val crawler: WikiCrawler = WikiCrawler()
+    private val crawler: WikiCrawler =
+        WikiCrawler()
 
     fun search(url: String, depth: Int) {
         /*val rootNode = WikiPage(url, crawler.getDescriptionFromPage(url), crawler.getLinksFromAbstract(url).toMutableSet(), entryNode = true)

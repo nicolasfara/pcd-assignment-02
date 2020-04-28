@@ -1,8 +1,7 @@
 package it.unibo.pcd.rx
 
+import it.unibo.pcd.presenter.rx.RxSearch
 import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
 
 internal class RxSearchTest {
 

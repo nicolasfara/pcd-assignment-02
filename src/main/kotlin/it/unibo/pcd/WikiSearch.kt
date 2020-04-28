@@ -1,8 +1,5 @@
 package it.unibo.pcd
 
-import it.unibo.pcd.data.WikiPage
-import org.jgrapht.graph.DefaultEdge
-import org.jgrapht.graph.SimpleDirectedGraph
 import java.util.concurrent.CompletableFuture
 
 class WikiSearch(var depth: Int, var url: String) {

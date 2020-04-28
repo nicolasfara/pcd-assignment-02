@@ -1,25 +1,19 @@
 package it.unibo.pcd
 
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.schedulers.Schedulers
-import it.unibo.pcd.coroutines.CoroutineSearch
-import it.unibo.pcd.data.WikiPage
-import it.unibo.pcd.forkjoin.LinkSearchAction
-import it.unibo.pcd.rx.RxSearch
+import it.unibo.pcd.contract.Contract
+import it.unibo.pcd.model.WikiPage
+import it.unibo.pcd.presenter.CrawlerPresenter
+import it.unibo.pcd.presenter.SearchStrategy
 import javafx.application.Platform
 import javafx.scene.control.*
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.StackPane
-import kotlinx.coroutines.*
 import org.jgrapht.Graph
 import org.jgrapht.Graphs
 import org.jgrapht.graph.DefaultEdge
-import org.jgrapht.graph.DirectedAcyclicGraph
-import org.jgrapht.graph.SimpleDirectedGraph
 import tornadofx.*
-import java.util.concurrent.ForkJoinPool
 
-class MainView : View("Wiki Link Search ") {
+class MainView: View("Wiki Link Search "), Contract.View {
     override val root: BorderPane by fxml("/MainView.fxml")
     private val graphPane: StackPane by fxid()
     private val wikiUrl: TextField by fxid()
@@ -28,67 +22,32 @@ class MainView : View("Wiki Link Search ") {
     private val searchBtn: Button by fxid()
     private val combo: ComboBox<SearchStrategy> by fxid()
 
+    private val presenter: CrawlerPresenter
+
     init {
         combo.items.addAll(SearchStrategy.values())
+        presenter = CrawlerPresenter()
+        presenter.attachView(this)
+    }
+
+    override fun displaySearchResult(graph: Graph<WikiPage, DefaultEdge>) {
+        Platform.runLater {
+            val tree = buildTreeView(graph)
+            tree.isShowRoot = false
+            graphPane.children.add(tree)
+            onFinishSearch()
+        }
     }
 
     fun search() {
+        onStartSearch()
+        presenter.startSearch(wikiUrl.text, depth.text.toInt(), combo.value)
+    }
+
+    private fun onStartSearch() {
         progress.isVisible = true
         graphPane.isDisable = true
         searchBtn.isDisable = true
-
-        when (combo.selectionModel.selectedItem) {
-            SearchStrategy.COROUTINES -> {
-                CoroutineScope(Dispatchers.IO).launch {
-                    val graph = CoroutineSearch().searchLinks(wikiUrl.text, depth.text.toInt())
-                    Platform.runLater {
-                        val treeView = buildTreeView(graph)
-                        treeView.isShowRoot = false
-                        graphPane.children.add(treeView)
-                        onFinishSearch()
-                    }
-                }
-            }
-            SearchStrategy.FORK_JOIN -> {
-                val wikiSearch = WikiSearch(depth.text.toInt(), wikiUrl.text)
-                wikiSearch.search({ depth: Int, url:String ->
-                    val graph = SimpleDirectedGraph<WikiPage, DefaultEdge>(DefaultEdge::class.java)
-                    val fjp = ForkJoinPool.commonPool()
-                    fjp.invoke(LinkSearchAction(graph, depth, url))
-                    graph
-                }, {
-                    Platform.runLater {
-                        val treeView = buildTreeView(it)
-                        treeView.isShowRoot = false
-                        graphPane.children.add(treeView)
-                        onFinishSearch()
-                    }
-                })
-            }
-            SearchStrategy.REACTIVE -> {
-                val graph = DirectedAcyclicGraph<WikiPage, DefaultEdge>(DefaultEdge::class.java)
-                val rxSearch = RxSearch()
-                /*rxSearch.search(wikiUrl.text, depth.text.toInt())
-                    .subscribeOn(Schedulers.computation())
-                    .subscribe {
-                            /*graph.addVertex(it.first)
-                            graph.addVertex(it.second)
-                            graph.addEdge(it.first, it.second)*/
-                        println(it)
-                        /*Platform.runLater {
-                            val treeView = buildTreeView(graph)
-                            treeView.isShowRoot = false
-                            graphPane.children.add(treeView)
-                            onFinishSearch()
-                        }*/
-                    }
-                println("Finish")*/
-                val obs = Observable.range(0, 1_000_000)
-
-            }
-            SearchStrategy.VERTX -> println("Vertx")
-            else -> println("Fuck")
-        }
     }
 
     private fun onFinishSearch() {

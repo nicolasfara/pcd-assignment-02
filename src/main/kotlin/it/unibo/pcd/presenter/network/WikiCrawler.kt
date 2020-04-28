@@ -1,4 +1,4 @@
-package it.unibo.pcd.network
+package it.unibo.pcd.presenter.network
 
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -7,7 +7,6 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import java.io.FileNotFoundException
-import java.net.HttpURLConnection
 import java.net.URL
 
 class WikiCrawler {
