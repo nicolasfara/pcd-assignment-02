@@ -3,67 +3,56 @@ package it.unibo.pcd.presenter.crawler.rx
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import it.unibo.pcd.model.WikiPage
+import it.unibo.pcd.presenter.crawler.Crawler
 import it.unibo.pcd.presenter.crawler.network.WikiCrawler
+import org.jgrapht.Graph
+import org.jgrapht.graph.DefaultEdge
+import org.jgrapht.graph.DirectedAcyclicGraph
+import java.lang.IllegalArgumentException
 
-class RxSearch {
+class RxSearch: Crawler {
 
-    private val crawler: WikiCrawler =
-        WikiCrawler()
+    private val crawler: WikiCrawler = WikiCrawler()
 
-    fun search(url: String, depth: Int) {
-        /*val rootNode = WikiPage(url, crawler.getDescriptionFromPage(url), crawler.getLinksFromAbstract(url).toMutableSet(), entryNode = true)
-        return searchLinks(rootNode, depth)*/
-        val rootNode = WikiPage(url, crawler.getDescriptionFromPage(url), crawler.getLinksFromAbstract(url).toMutableSet())
+    override fun crawl(url: String, depth: Int, callback: (Graph<WikiPage, DefaultEdge>) -> Unit) {
+        val graph = DirectedAcyclicGraph<WikiPage, DefaultEdge>(DefaultEdge::class.java)
+        val rootNode = WikiPage(url, crawler.getDescriptionFromPage(url), crawler.getLinksFromAbstract(url).toMutableSet(), entryNode = true)
+        graph.addVertex(rootNode)
 
-        searchLinks2(rootNode, depth)
-            .subscribe {
-                println(Thread.currentThread().name)
-                println(it)
+        searchLinks(PairWikiPage(rootNode.baseURL, rootNode), depth)
+            .doOnComplete {
+                callback(graph)
             }
-
-        println("Finish")
+            .subscribe {
+                println(it)
+                try {
+                    graph.addVertex(it.child)
+                    val parent = graph.vertexSet().find { e -> e.baseURL == it.parent }
+                    if (parent != null) {
+                        graph.addEdge(parent, it.child)
+                    }
+                } catch (ex: IllegalArgumentException) {
+                    println("Found duplicate vertex")
+                }
+            }
     }
 
-    private fun searchLinks2(rootPage: WikiPage, depth: Int): Observable<WikiPage> {
+    private fun searchLinks(rootPage: PairWikiPage, depth: Int): Observable<PairWikiPage> {
         return if (depth > 0) {
-            Observable.fromIterable(rootPage.links)
-                .map {
-                    WikiPage(
-                        it, crawler.getDescriptionFromPage(it),
-                        crawler.getLinksFromAbstract(it).toMutableSet()
-                    )
-                }
+            Observable.merge(Observable.just(rootPage),
+            Observable.fromIterable(rootPage.child.links)
                 .flatMap {
-                    searchLinks2(it, depth - 1)
-                }
-                .observeOn(Schedulers.io())
+                    val node = PairWikiPage(
+                        rootPage.child.baseURL,
+                        WikiPage(it, crawler.getDescriptionFromPage(it), if(depth == 1) mutableSetOf() else crawler.getLinksFromAbstract(it).toMutableSet())
+                    )
+                    searchLinks(node, depth - 1).subscribeOn(Schedulers.io())
+                })
+                .subscribeOn(Schedulers.io())
         } else {
             Observable.just(rootPage)
         }
     }
 
-    private fun getObservableLinks(url: String): Observable<String> {
-        return Observable.fromIterable(crawler.getLinksFromAbstract(url))
-
-    }
-
-    private fun searchLinks(rootPage: WikiPage, depth: Int): Observable<Pair<WikiPage, WikiPage>> {
-        if (depth > 0) {
-            return Observable.merge(
-                Observable.just(Pair(rootPage, WikiPage("", ""))),
-                Observable.fromIterable(rootPage.links)
-                    .observeOn(Schedulers.io())
-                    .flatMap { getWikiPageFromUrl(rootPage, it, depth) }
-                    .flatMap { searchLinks(it.second, depth-1) }
-            )
-        }
-        return Observable.just(Pair(rootPage, WikiPage("", "")))
-    }
-
-    private fun getWikiPageFromUrl(parent: WikiPage, url: String, depth: Int): Observable<Pair<WikiPage, WikiPage>> {
-        return Observable.just(
-            Pair(parent, WikiPage(url, crawler.getDescriptionFromPage(url),
-                if (depth == 1) mutableSetOf() else crawler.getLinksFromAbstract(url).toMutableSet()))
-        )
-    }
+    private data class PairWikiPage(val parent: String, val child: WikiPage)
 }

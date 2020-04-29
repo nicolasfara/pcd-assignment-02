@@ -3,6 +3,7 @@ package it.unibo.pcd.presenter
 import it.unibo.pcd.contract.Contract
 import it.unibo.pcd.presenter.crawler.coroutines.CoroutineSearch
 import it.unibo.pcd.presenter.crawler.forkjoin.ForkJoinSearch
+import it.unibo.pcd.presenter.crawler.rx.RxSearch
 
 class CrawlerPresenter: Contract.Presenter {
 
@@ -22,7 +23,9 @@ class CrawlerPresenter: Contract.Presenter {
                 }
             }
             SearchStrategy.REACTIVE -> {
-
+                RxSearch().crawl(url, depth) {
+                    view.displaySearchResult(it)
+                }
             }
             SearchStrategy.VERTX -> {
                 println("Vertx")

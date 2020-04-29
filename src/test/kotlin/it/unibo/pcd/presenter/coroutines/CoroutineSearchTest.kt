@@ -13,9 +13,6 @@ internal class CoroutineSearchTest {
 
     @Test
     fun searchLinks() {
-        runBlocking {
-            val graph = search.searchLinks("https://it.wikipedia.org/wiki/Bertinoro", 1)
-            assertEquals(6, graph.vertexSet().size)
-        }
+
     }
 }

@@ -4,7 +4,6 @@ import it.unibo.pcd.model.WikiPage
 import it.unibo.pcd.presenter.crawler.network.WikiCrawler
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.DirectedAcyclicGraph
-import org.jgrapht.graph.SimpleDirectedGraph
 import java.util.concurrent.RecursiveAction
 
 class LinkSearchAction(private val graph: DirectedAcyclicGraph<WikiPage, DefaultEdge>, private val depth: Int = 5, private val startURL: String): RecursiveAction() {
