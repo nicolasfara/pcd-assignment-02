@@ -24,7 +24,6 @@ class RxSearch: Crawler {
                 callback(graph)
             }
             .subscribe {
-                println(it)
                 try {
                     graph.addVertex(it.child)
                     val parent = graph.vertexSet().find { e -> e.baseURL == it.parent }
