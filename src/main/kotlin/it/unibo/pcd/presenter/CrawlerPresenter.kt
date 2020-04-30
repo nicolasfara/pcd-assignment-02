@@ -4,6 +4,7 @@ import it.unibo.pcd.contract.Contract
 import it.unibo.pcd.presenter.crawler.coroutines.CoroutineSearch
 import it.unibo.pcd.presenter.crawler.forkjoin.ForkJoinSearch
 import it.unibo.pcd.presenter.crawler.rx.RxSearch
+import it.unibo.pcd.presenter.crawler.vertx.my.VertxCrawler
 
 class CrawlerPresenter: Contract.Presenter {
 
@@ -40,7 +41,12 @@ class CrawlerPresenter: Contract.Presenter {
                 })
             }
             SearchStrategy.VERTX -> {
-                println("Vertx")
+                VertxCrawler().crawl(url, depth, {
+                    view.displaySearchResult(it)
+                }, {
+                    view.onFinishResult()
+                    println("Finish")
+                })
             }
         }
     }
