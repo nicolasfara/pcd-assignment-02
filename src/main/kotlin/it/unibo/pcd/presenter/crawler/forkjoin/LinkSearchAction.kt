@@ -39,11 +39,16 @@ class LinkSearchAction(private val graph: DirectedAcyclicGraph<WikiPage, Default
                 }
             }
 
+            val list = mutableListOf<LinkSearchAction>()
+
             currentVertex.links.forEach {
                 val lsa = LinkSearchAction(graph, depth - 1, it)
                 lsa.fork()
-                lsa.join()
+                list.add(lsa)
+                //lsa.join()
             }
+
+            list.forEach { it.join() }
         }
     }
 }
