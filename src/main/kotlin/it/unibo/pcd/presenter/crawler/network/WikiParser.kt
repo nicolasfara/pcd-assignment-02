@@ -1,6 +1,6 @@
 package it.unibo.pcd.presenter.crawler.network
 
 interface WikiParser {
-    fun getLinksInAbstract(url: String): Collection<String>
-    fun getDescription(url: String): String
+    fun getLinksInAbstract(body: String): Collection<String>
+    fun getDescription(json: String): String
 }
