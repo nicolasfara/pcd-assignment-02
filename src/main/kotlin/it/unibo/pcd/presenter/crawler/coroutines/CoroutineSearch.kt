@@ -1,5 +1,6 @@
 package it.unibo.pcd.presenter.crawler.coroutines
 
+import io.reactivex.rxjava3.subjects.PublishSubject
 import it.unibo.pcd.model.WikiPage
 import it.unibo.pcd.presenter.crawler.Crawler
 import it.unibo.pcd.presenter.crawler.network.WikiCrawler
@@ -12,12 +13,21 @@ class CoroutineSearch: Crawler {
 
     private lateinit var graph: DirectedAcyclicGraph<WikiPage, DefaultEdge>
     private val crawler: WikiCrawler = WikiCrawler()
+    private val subject = PublishSubject.create<Graph<WikiPage, DefaultEdge>>()
 
-    override fun crawl(url: String, depth: Int, callback: (Graph<WikiPage, DefaultEdge>) -> Unit) {
+    override fun crawl(
+        url: String,
+        depth: Int,
+        objectEmit: (Graph<WikiPage, DefaultEdge>) -> Unit,
+        onComplete: () -> Unit
+    ) {
         CoroutineScope(Dispatchers.IO).launch {
+            subject.subscribe { objectEmit(it) }
             graph = DirectedAcyclicGraph(DefaultEdge::class.java)
             val rootNode = WikiPage(url, crawler.getDescriptionFromPage(url), crawler.getLinksFromAbstract(url).toMutableSet(), entryNode = true)
-            callback(search(rootNode, depth))
+            search(rootNode, depth)
+            subject.onComplete()
+            onComplete()
         }
     }
 
@@ -33,6 +43,7 @@ class CoroutineSearch: Crawler {
                         try {
                             graph.addVertex(currNode)
                             graph.addEdge(rootPage, currNode)
+                            subject.onNext(graph)
                             search(currNode, depth - 1)
                         } catch (ex: Exception) {
                             when (ex) {

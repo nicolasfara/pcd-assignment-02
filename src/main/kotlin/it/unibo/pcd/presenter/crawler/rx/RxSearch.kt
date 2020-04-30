@@ -14,15 +14,22 @@ class RxSearch: Crawler {
 
     private val crawler: WikiCrawler = WikiCrawler()
 
-    override fun crawl(url: String, depth: Int, callback: (Graph<WikiPage, DefaultEdge>) -> Unit) {
+    override fun crawl(
+        url: String,
+        depth: Int,
+        objectEmit: (Graph<WikiPage, DefaultEdge>) -> Unit,
+        onComplete: () -> Unit
+    ) {
         val graph = DirectedAcyclicGraph<WikiPage, DefaultEdge>(DefaultEdge::class.java)
         val rootNode = WikiPage(url, crawler.getDescriptionFromPage(url), crawler.getLinksFromAbstract(url).toMutableSet(), entryNode = true)
         graph.addVertex(rootNode)
 
         searchLinks(PairWikiPage(rootNode.baseURL, rootNode), depth)
-            .doOnComplete {
-                callback(graph)
-            }
+            //.doOnComplete {
+            //    callback(graph)
+            //}
+            .subscribeOn(Schedulers.computation())
+            .doOnComplete { onComplete() }
             .subscribe {
                 try {
                     graph.addVertex(it.child)
@@ -30,6 +37,7 @@ class RxSearch: Crawler {
                     if (parent != null) {
                         graph.addEdge(parent, it.child)
                     }
+                    objectEmit(graph)
                 } catch (ex: IllegalArgumentException) {
                     println("Found duplicate vertex")
                 }
@@ -45,9 +53,9 @@ class RxSearch: Crawler {
                         rootPage.child.baseURL,
                         WikiPage(it, crawler.getDescriptionFromPage(it), if(depth == 1) mutableSetOf() else crawler.getLinksFromAbstract(it).toMutableSet())
                     )
-                    searchLinks(node, depth - 1).subscribeOn(Schedulers.io())
+                    searchLinks(node, depth - 1).observeOn(Schedulers.io())
                 })
-                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
         } else {
             Observable.just(rootPage)
         }

@@ -1,12 +1,20 @@
 package it.unibo.pcd.presenter.crawler.forkjoin
 
+import io.reactivex.rxjava3.subjects.PublishSubject
 import it.unibo.pcd.model.WikiPage
 import it.unibo.pcd.presenter.crawler.network.WikiCrawler
+import org.jgrapht.Graph
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.DirectedAcyclicGraph
 import java.util.concurrent.RecursiveAction
+import javax.security.auth.Subject
 
-class LinkSearchAction(private val graph: DirectedAcyclicGraph<WikiPage, DefaultEdge>, private val depth: Int = 5, private val startURL: String): RecursiveAction() {
+class LinkSearchAction(
+    private val graph: DirectedAcyclicGraph<WikiPage, DefaultEdge>,
+    private val depth: Int = 5,
+    private val startURL: String,
+    private val subject: PublishSubject<Graph<WikiPage, DefaultEdge>>
+): RecursiveAction() {
 
     private val crawler: WikiCrawler =
         WikiCrawler()
@@ -35,6 +43,7 @@ class LinkSearchAction(private val graph: DirectedAcyclicGraph<WikiPage, Default
                     if (!graph.vertexSet().map { e -> e.baseURL }.contains(linkVertex.baseURL)) {
                         graph.addVertex(linkVertex)
                         graph.addEdge(currentVertex, linkVertex)
+                        subject.onNext(graph)
                     }
                 }
             }
@@ -42,7 +51,7 @@ class LinkSearchAction(private val graph: DirectedAcyclicGraph<WikiPage, Default
             val list = mutableListOf<LinkSearchAction>()
 
             currentVertex.links.forEach {
-                val lsa = LinkSearchAction(graph, depth - 1, it)
+                val lsa = LinkSearchAction(graph, depth - 1, it, subject)
                 lsa.fork()
                 list.add(lsa)
                 //lsa.join()

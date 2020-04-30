@@ -46,13 +46,13 @@ class MainView: View("Wiki Link Search "), Contract.View {
 
     private fun onStartSearch() {
         progress.isVisible = true
-        graphPane.isDisable = true
+        //graphPane.isDisable = true
         searchBtn.isDisable = true
     }
 
     private fun onFinishSearch() {
         progress.isVisible = false
-        graphPane.isDisable = false
+        //graphPane.isDisable = false
         searchBtn.isDisable = false
     }
 

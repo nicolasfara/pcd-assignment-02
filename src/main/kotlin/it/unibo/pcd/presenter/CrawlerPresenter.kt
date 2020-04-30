@@ -13,19 +13,22 @@ class CrawlerPresenter: Contract.Presenter {
         println("URL: $url DEPTH: $depth STRATEGY: $strategy")
         when (strategy) {
             SearchStrategy.COROUTINES -> {
-                CoroutineSearch().crawl(url, depth) {
+                CoroutineSearch().crawl(url, depth, {
+                    println("New Item")
                     view.displaySearchResult(it)
-                }
+                }, { println("finish") })
             }
             SearchStrategy.FORK_JOIN -> {
-                ForkJoinSearch().crawl(url, depth) {
+                ForkJoinSearch().crawl(url, depth, {
+                    println("New Item")
                     view.displaySearchResult(it)
-                }
+                }, { println("Finish") })
             }
             SearchStrategy.REACTIVE -> {
-                RxSearch().crawl(url, depth) {
+                RxSearch().crawl(url, depth, {
+                    println("New Item")
                     view.displaySearchResult(it)
-                }
+                }, { println("finish") })
             }
             SearchStrategy.VERTX -> {
                 println("Vertx")
