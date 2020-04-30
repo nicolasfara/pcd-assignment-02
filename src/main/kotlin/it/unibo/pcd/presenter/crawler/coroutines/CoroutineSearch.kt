@@ -58,6 +58,4 @@ class CoroutineSearch: Crawler {
         }
         return@coroutineScope graph
     }
-
-
 }

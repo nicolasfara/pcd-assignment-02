@@ -16,19 +16,28 @@ class CrawlerPresenter: Contract.Presenter {
                 CoroutineSearch().crawl(url, depth, {
                     println("New Item")
                     view.displaySearchResult(it)
-                }, { println("finish") })
+                }, {
+                    view.onFinishResult()
+                    println("finish")
+                })
             }
             SearchStrategy.FORK_JOIN -> {
                 ForkJoinSearch().crawl(url, depth, {
                     println("New Item")
                     view.displaySearchResult(it)
-                }, { println("Finish") })
+                }, {
+                    view.onFinishResult()
+                    println("Finish")
+                })
             }
             SearchStrategy.REACTIVE -> {
                 RxSearch().crawl(url, depth, {
                     println("New Item")
                     view.displaySearchResult(it)
-                }, { println("finish") })
+                }, {
+                    view.onFinishResult()
+                    println("finish")
+                })
             }
             SearchStrategy.VERTX -> {
                 println("Vertx")

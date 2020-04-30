@@ -35,8 +35,11 @@ class MainView: View("Wiki Link Search "), Contract.View {
             val tree = buildTreeView(graph)
             tree.isShowRoot = false
             graphPane.children.add(tree)
-            onFinishSearch()
         }
+    }
+
+    override fun onFinishResult() {
+        onFinishSearch()
     }
 
     fun search() {

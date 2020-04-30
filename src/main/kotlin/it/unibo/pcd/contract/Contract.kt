@@ -8,6 +8,7 @@ import org.jgrapht.graph.DefaultEdge
 class Contract {
     interface View: BaseContract.View {
         fun displaySearchResult(graph: Graph<WikiPage, DefaultEdge>)
+        fun onFinishResult()
     }
 
     interface Presenter: BaseContract.Presenter<View> {
