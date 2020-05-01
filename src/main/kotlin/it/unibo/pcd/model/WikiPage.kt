@@ -1,7 +1,9 @@
 package it.unibo.pcd.model
 
-data class WikiPage(val baseURL: String, val description: String, var links: MutableSet<String> = mutableSetOf(), val entryNode: Boolean = false) {
+import java.util.*
+
+data class WikiPage(val parent: Optional<String>, val baseURL: String, val description: String, var links: Set<String>, val entryNode: Boolean = false) {
     override fun toString(): String {
-        return "WikiPage(url: ${baseURL.substringAfter("wiki/")}, links: ${links.size})"
+        return "WikiPage(parent: $parent, url: ${baseURL.substringAfter("wiki/")}, links: ${links.size})"
     }
 }

@@ -15,7 +15,7 @@ class WikiCrawler {
 
     fun getLinksFromAbstract(pageURL: String) : Collection<String> {
         var headlines = emptyList<String>()
-        try{
+        try {
             val doc: Document = Jsoup.connect(normalizeUrlForApi(pageURL)).get()
             val newsHeadlines: Elements = doc.select("section:first-child p > a:not([href*=#])")
             headlines = newsHeadlines.map { baseWikiUrl + it.attr("title").replace(" ", "_") }

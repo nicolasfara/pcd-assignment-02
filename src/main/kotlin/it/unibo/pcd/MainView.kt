@@ -30,7 +30,8 @@ class MainView: View("Wiki Link Search "), Contract.View {
         presenter.attachView(this)
     }
 
-    override fun displaySearchResult(graph: Graph<WikiPage, DefaultEdge>) {
+    @Synchronized override fun displaySearchResult(graph: Graph<WikiPage, DefaultEdge>) {
+        println("Display")
         Platform.runLater {
             val tree = buildTreeView(graph)
             tree.isShowRoot = false
@@ -59,7 +60,7 @@ class MainView: View("Wiki Link Search "), Contract.View {
         searchBtn.isDisable = false
     }
 
-    private fun buildTreeView(graph: Graph<WikiPage, DefaultEdge>): TreeView<String> {
+    @Synchronized private fun buildTreeView(graph: Graph<WikiPage, DefaultEdge>): TreeView<String> {
         val treeItem: TreeItem<String> = TreeItem()
         graphToTree(graph, graph.vertexSet().first { el -> el.entryNode }, treeItem)
         return TreeView(treeItem)

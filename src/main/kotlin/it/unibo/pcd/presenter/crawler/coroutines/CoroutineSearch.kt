@@ -1,5 +1,8 @@
 package it.unibo.pcd.presenter.crawler.coroutines
 
+import io.reactivex.rxjava3.processors.FlowableProcessor
+import io.reactivex.rxjava3.processors.PublishProcessor
+import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
 import it.unibo.pcd.model.WikiPage
 import it.unibo.pcd.presenter.crawler.Crawler
@@ -8,54 +11,66 @@ import kotlinx.coroutines.*
 import org.jgrapht.Graph
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.DirectedAcyclicGraph
+import org.jgrapht.graph.concurrent.AsSynchronizedGraph
+import java.lang.IllegalArgumentException
+import java.util.*
 
 class CoroutineSearch: Crawler {
 
-    private lateinit var graph: DirectedAcyclicGraph<WikiPage, DefaultEdge>
+    private val graph = DirectedAcyclicGraph<WikiPage, DefaultEdge>(DefaultEdge::class.java)
     private val crawler: WikiCrawler = WikiCrawler()
-    private val subject = PublishSubject.create<Graph<WikiPage, DefaultEdge>>()
+    private val observable = PublishProcessor.create<Graph<WikiPage, DefaultEdge>>().toSerialized()
+    private val list = mutableListOf<WikiPage>()
 
-    override fun crawl(
-        url: String,
-        depth: Int,
-        objectEmit: (Graph<WikiPage, DefaultEdge>) -> Unit,
-        onComplete: () -> Unit
-    ) {
+    override fun crawl(url: String, depth: Int): FlowableProcessor<Graph<WikiPage, DefaultEdge>> {
         CoroutineScope(Dispatchers.IO).launch {
-            subject.subscribe { objectEmit(it) }
-            graph = DirectedAcyclicGraph(DefaultEdge::class.java)
-            val rootNode = WikiPage(url, crawler.getDescriptionFromPage(url), crawler.getLinksFromAbstract(url).toMutableSet(), entryNode = true)
-            search(rootNode, depth)
-            subject.onComplete()
-            onComplete()
-        }
-    }
-
-    private suspend fun search(rootPage: WikiPage, depth: Int): DirectedAcyclicGraph<WikiPage, DefaultEdge> = coroutineScope {
-        if (depth > 0) {
-            graph.addVertex(rootPage)
-            rootPage.links
-                .map {
-                    async {
-                        val currNode = WikiPage(it, crawler.getDescriptionFromPage(it),
-                            if (depth == 1) mutableSetOf() else crawler.getLinksFromAbstract(it).toMutableSet()
-                        )
-                        try {
-                            graph.addVertex(currNode)
-                            graph.addEdge(rootPage, currNode)
-                            subject.onNext(graph)
-                            search(currNode, depth - 1)
-                        } catch (ex: Exception) {
-                            when (ex) {
-                                is NullPointerException -> println("null value")
-                                is IllegalArgumentException -> println("Duplicate value")
-                            }
-                            graph.removeVertex(currNode)
+            val root = WikiPage(Optional.empty(), url, crawler.getDescriptionFromPage(url), crawler.getLinksFromAbstract(url).toSet(), entryNode = true)
+            graph.addVertex(root)
+            recursiveSearch(root, depth)
+            list
+                //.map { it.await() }
+                .forEach {
+                    it.parent.ifPresent { e ->
+                        val parentNode = graph.vertexSet().find { v -> v.baseURL == e }
+                        if (!graph.vertexSet().map { v -> v.baseURL }.contains(it.baseURL)) {
+                            graph.addVertex(it)
+                            graph.addEdge(parentNode, it)
+                            observable.onNext(AsSynchronizedGraph.Builder<WikiPage, DefaultEdge>().build(graph))
                         }
                     }
-                }
-                .awaitAll()
+            }
+            observable.onComplete()
         }
-        return@coroutineScope graph
+        return observable
+    }
+
+    private suspend fun recursiveSearch(rootPage: WikiPage, depth: Int): Unit = coroutineScope {
+
+        return@coroutineScope when {
+            depth > 0 -> {
+                rootPage.links
+                    .map {
+                        async {
+                            val node = WikiPage(
+                                Optional.of(rootPage.baseURL),
+                                it,
+                                crawler.getDescriptionFromPage(it),
+                                crawler.getLinksFromAbstract(it).toSet()
+                            )
+                            node
+                        }
+                    }
+                    .map { it.await() }
+                    .forEach {
+                        list.add(it)
+                        val node = it
+                        recursiveSearch(node, depth - 1)
+                    }
+            }
+            else -> {
+                //list.add(rootPage)
+                //list
+            }
+        }
     }
 }
