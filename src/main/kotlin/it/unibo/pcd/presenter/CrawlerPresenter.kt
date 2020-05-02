@@ -3,7 +3,7 @@ package it.unibo.pcd.presenter
 import io.reactivex.rxjava3.schedulers.Schedulers
 import it.unibo.pcd.contract.Contract
 import it.unibo.pcd.presenter.crawler.coroutines.CoroutineSearch
-import it.unibo.pcd.presenter.crawler.forkjoin.my.ForkJoinCrawler
+import it.unibo.pcd.presenter.crawler.forkjoin.ForkJoinCrawler
 import it.unibo.pcd.presenter.crawler.rx.RxCrawler
 import it.unibo.pcd.presenter.crawler.vertx.VertxCrawler
 

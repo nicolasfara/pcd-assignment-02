@@ -1,12 +1,10 @@
-package it.unibo.pcd.presenter.crawler.forkjoin.my
+package it.unibo.pcd.presenter.crawler.forkjoin
 
 import io.reactivex.rxjava3.core.Flowable
-import io.reactivex.rxjava3.processors.FlowableProcessor
 import io.reactivex.rxjava3.processors.PublishProcessor
 import it.unibo.pcd.model.WikiPage
 import it.unibo.pcd.presenter.crawler.Crawler
 import it.unibo.pcd.presenter.crawler.network.WikiCrawler
-import org.jgrapht.Graph
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.DirectedAcyclicGraph
 import java.util.*
@@ -23,7 +21,8 @@ class ForkJoinCrawler: Crawler {
             val rootNode = WikiPage(Optional.empty(), url, crawler.getDescriptionFromPage(url), crawler.getLinksFromAbstract(url).toSet(), entryNode = true)
             graph.addVertex(rootNode)
 
-            val fj = ForkJoinLinksSearch(rootNode, depth, crawler)
+            val fj =
+                ForkJoinLinksSearch(rootNode, depth, crawler)
             ForkJoinPool().invoke(fj)
             fj.get().forEach {
                 it.parent.ifPresent { parent ->

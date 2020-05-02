@@ -1,4 +1,4 @@
-package it.unibo.pcd.presenter.crawler.forkjoin.my
+package it.unibo.pcd.presenter.crawler.forkjoin
 
 import it.unibo.pcd.model.WikiPage
 import it.unibo.pcd.presenter.crawler.network.WikiCrawler
@@ -19,7 +19,11 @@ class ForkJoinLinksSearch(
                 .map { WikiPage(Optional.of(rootPage.baseURL), it, crawler.getDescriptionFromPage(it), crawler.getLinksFromAbstract(it).toSet()) }
                 .forEach {
                     list.add(it)
-                    val ele = ForkJoinLinksSearch(it, depth-1, crawler)
+                    val ele = ForkJoinLinksSearch(
+                        it,
+                        depth - 1,
+                        crawler
+                    )
                     ele.fork()
                     taskList.add(ele)
                 }
