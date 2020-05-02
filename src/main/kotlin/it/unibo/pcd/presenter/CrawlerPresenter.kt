@@ -42,13 +42,6 @@ class CrawlerPresenter : Contract.Presenter {
                     .subscribe {
                         view.displaySearchResult(it)
                     }
-                /*RxSearch().crawl(url, depth, {
-                    println("New Item")
-                    view.displaySearchResult(it)
-                }, {
-                    view.onFinishResult()
-                    println("finish")
-                })*/
             }
             SearchStrategy.VERTX -> {
                 VertxCrawler().crawl(url, depth)
