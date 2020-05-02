@@ -31,21 +31,6 @@ class CoroutineSearch: Crawler {
         CoroutineScope(Dispatchers.IO).launch {
             val root = WikiPage(Optional.empty(), url, crawler.getDescriptionFromPage(url), crawler.getLinksFromAbstract(url).toSet(), entryNode = true)
             graph.addVertex(root)
-            //recursiveSearch(root, depth)
-            /*list
-                //.map { it.await() }
-                .forEach {
-                    /*it.parent.ifPresent { e ->
-                        val parentNode = graph.vertexSet().find { v -> v.baseURL == e }
-                        if (!graph.vertexSet().map { v -> v.baseURL }.contains(it.baseURL)) {
-                            graph.addVertex(it)
-                            graph.addEdge(parentNode, it)
-                            observable.onNext(AsSynchronizedGraph.Builder<WikiPage, DefaultEdge>().build(AsUnmodifiableGraph(graph)))
-                        }
-                    }*/
-                    observable.onNext(it)
-            }
-            observable.onComplete()*/
             iterativeSearch(root, depth).collect {
                 it.parent.ifPresent { e ->
                     val parentNode = graph.vertexSet().find { v -> v.baseURL == e }

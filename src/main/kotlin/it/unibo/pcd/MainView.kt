@@ -9,13 +9,7 @@ import javafx.collections.FXCollections
 import javafx.scene.control.*
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.StackPane
-import org.jgrapht.Graph
-import org.jgrapht.Graphs
-import org.jgrapht.graph.DefaultEdge
-import org.jgrapht.graph.concurrent.AsSynchronizedGraph
-import org.jgrapht.traverse.DepthFirstIterator
 import tornadofx.*
-import java.util.*
 import kotlin.collections.HashSet
 
 class MainView: View("Wiki Link Search "), Contract.View {
@@ -41,10 +35,6 @@ class MainView: View("Wiki Link Search "), Contract.View {
 
     override fun displaySearchResult(vertex: Set<WikiPage>) {
         Platform.runLater {
-            //val tree = buildTreeView(vertex)
-            //tree.isShowRoot = false
-            //graphPane.children.add(tree)
-            //itemList.add(graph.baseURL)
             resSet.addAll(vertex.map { it.baseURL })
             itemsList.clear()
             itemsList.addAll(resSet)
