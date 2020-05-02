@@ -43,7 +43,7 @@ class SearchVerticle(private val baseUrl: String, private val depth: Int) : Abst
                     }
                 }
             } else {
-                error("Error")
+                vertx.eventBus().send("chanel.finish", "DONE")
             }
         }
     }

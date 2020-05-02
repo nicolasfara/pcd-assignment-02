@@ -33,7 +33,9 @@ class VertxCrawler : Crawler {
             }
         }
         vertx.eventBus().consumer<String>("chanel.finish") {
+            vertx.close()
             observable.onComplete()
+
         }
 
         vertx.deployVerticle(SearchVerticle(url, depth))
