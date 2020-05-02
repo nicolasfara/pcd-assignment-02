@@ -5,13 +5,18 @@ import it.unibo.pcd.model.WikiPage
 import it.unibo.pcd.presenter.CrawlerPresenter
 import it.unibo.pcd.presenter.SearchStrategy
 import javafx.application.Platform
+import javafx.collections.FXCollections
 import javafx.scene.control.*
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.StackPane
 import org.jgrapht.Graph
 import org.jgrapht.Graphs
 import org.jgrapht.graph.DefaultEdge
+import org.jgrapht.graph.concurrent.AsSynchronizedGraph
+import org.jgrapht.traverse.DepthFirstIterator
 import tornadofx.*
+import java.util.*
+import kotlin.collections.HashSet
 
 class MainView: View("Wiki Link Search "), Contract.View {
     override val root: BorderPane by fxml("/MainView.fxml")
@@ -21,6 +26,9 @@ class MainView: View("Wiki Link Search "), Contract.View {
     private val progress: ProgressIndicator by fxid()
     private val searchBtn: Button by fxid()
     private val combo: ComboBox<SearchStrategy> by fxid()
+    private val resSet = HashSet<String>()
+    private val itemsList = FXCollections.observableArrayList<String>()
+    private val listView = ListView(itemsList)
 
     private val presenter: CrawlerPresenter
 
@@ -28,22 +36,30 @@ class MainView: View("Wiki Link Search "), Contract.View {
         combo.items.addAll(SearchStrategy.values())
         presenter = CrawlerPresenter()
         presenter.attachView(this)
+        graphPane.children.add(listView)
     }
 
-    @Synchronized override fun displaySearchResult(graph: Graph<WikiPage, DefaultEdge>) {
-        println("Display")
+    override fun displaySearchResult(vertex: Set<WikiPage>) {
         Platform.runLater {
-            val tree = buildTreeView(graph)
-            tree.isShowRoot = false
-            graphPane.children.add(tree)
+            //val tree = buildTreeView(vertex)
+            //tree.isShowRoot = false
+            //graphPane.children.add(tree)
+            //itemList.add(graph.baseURL)
+            resSet.addAll(vertex.map { it.baseURL })
+            itemsList.clear()
+            itemsList.addAll(resSet)
         }
     }
 
     override fun onFinishResult() {
-        onFinishSearch()
+        Platform.runLater {
+            onFinishSearch()
+        }
     }
 
+    @ExperimentalStdlibApi
     fun search() {
+        itemsList.clear()
         onStartSearch()
         presenter.startSearch(wikiUrl.text, depth.text.toInt(), combo.value)
     }
@@ -60,9 +76,11 @@ class MainView: View("Wiki Link Search "), Contract.View {
         searchBtn.isDisable = false
     }
 
-    @Synchronized private fun buildTreeView(graph: Graph<WikiPage, DefaultEdge>): TreeView<String> {
+    /*@Synchronized private fun buildTreeView(graph: Set<WikiPage>): TreeView<String> {
         val treeItem: TreeItem<String> = TreeItem()
-        graphToTree(graph, graph.vertexSet().first { el -> el.entryNode }, treeItem)
+        val copyGraph = AsSynchronizedGraph.Builder<WikiPage, DefaultEdge>().build(graph)
+        val entryNode = HashSet(copyGraph.vertexSet())
+        graphToTree(graph, graph.find { it.entryNode }!!, treeItem)
         return TreeView(treeItem)
     }
 
@@ -74,7 +92,7 @@ class MainView: View("Wiki Link Search "), Contract.View {
         } else {
             parent.children.add(TreeItem(vertex.baseURL))
         }
-    }
+    }*/
 }
 
 class MyApp: App(MainView::class)

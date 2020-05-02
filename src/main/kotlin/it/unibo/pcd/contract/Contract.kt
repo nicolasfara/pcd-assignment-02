@@ -7,7 +7,7 @@ import org.jgrapht.graph.DefaultEdge
 
 class Contract {
     interface View: BaseContract.View {
-        fun displaySearchResult(graph: Graph<WikiPage, DefaultEdge>)
+        fun displaySearchResult(vertex: Set<WikiPage>)
         fun onFinishResult()
     }
 

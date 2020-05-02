@@ -7,5 +7,5 @@ import org.jgrapht.Graph
 import org.jgrapht.graph.DefaultEdge
 
 interface Crawler {
-    fun crawl(url: String, depth: Int): FlowableProcessor<Graph<WikiPage, DefaultEdge>>
+    fun crawl(url: String, depth: Int): FlowableProcessor<Set<WikiPage>>
 }

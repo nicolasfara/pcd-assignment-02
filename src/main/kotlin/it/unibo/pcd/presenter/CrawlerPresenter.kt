@@ -1,14 +1,15 @@
 package it.unibo.pcd.presenter
 
+import io.reactivex.rxjava3.schedulers.Schedulers
 import it.unibo.pcd.contract.Contract
 import it.unibo.pcd.presenter.crawler.coroutines.CoroutineSearch
 import it.unibo.pcd.presenter.crawler.forkjoin.my.ForkJoinCrawler
-import it.unibo.pcd.presenter.crawler.rx.RxSearch
 
 class CrawlerPresenter: Contract.Presenter {
 
     private lateinit var view: Contract.View
 
+    @ExperimentalStdlibApi
     override fun startSearch(url: String, depth: Int, strategy: SearchStrategy) {
         println("URL: $url DEPTH: $depth STRATEGY: $strategy")
         when (strategy) {
@@ -16,12 +17,20 @@ class CrawlerPresenter: Contract.Presenter {
                 CoroutineSearch().crawl(url, depth)
                     .onBackpressureBuffer(5_000) { println("Backpressured") }
                     .doOnComplete { view.onFinishResult() }
-                    .subscribe { view.displaySearchResult(it) }
+                    .subscribeOn(Schedulers.computation())
+                    .subscribe {
+                        view.displaySearchResult(it)
+                    }
             }
             SearchStrategy.FORK_JOIN -> {
                 ForkJoinCrawler().crawl(url, depth)
+                    .onBackpressureBuffer(5_000) { println("Backpressure") }
+                    .subscribeOn(Schedulers.computation())
                     .doOnComplete { view.onFinishResult() }
-                    .subscribe { view.displaySearchResult(it) }
+                    .subscribe {
+                        view.displaySearchResult(it)
+
+                    }
             }
             SearchStrategy.REACTIVE -> {
                 /*RxSearch().crawl(url, depth, {
