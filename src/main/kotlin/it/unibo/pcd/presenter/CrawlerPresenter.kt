@@ -5,8 +5,9 @@ import it.unibo.pcd.contract.Contract
 import it.unibo.pcd.presenter.crawler.coroutines.CoroutineSearch
 import it.unibo.pcd.presenter.crawler.forkjoin.my.ForkJoinCrawler
 import it.unibo.pcd.presenter.crawler.rx.RxCrawler
+import it.unibo.pcd.presenter.crawler.vertx.VertxCrawler
 
-class CrawlerPresenter: Contract.Presenter {
+class CrawlerPresenter : Contract.Presenter {
 
     private lateinit var view: Contract.View
 
@@ -50,7 +51,13 @@ class CrawlerPresenter: Contract.Presenter {
                 })*/
             }
             SearchStrategy.VERTX -> {
-
+                VertxCrawler().crawl(url, depth)
+                    .onBackpressureBuffer(5_000) { println("Backpressure") }
+                    .subscribeOn(Schedulers.computation())
+                    .doOnComplete { view.onFinishResult() }
+                    .subscribe {
+                        view.displaySearchResult(it)
+                    }
             }
         }
     }
