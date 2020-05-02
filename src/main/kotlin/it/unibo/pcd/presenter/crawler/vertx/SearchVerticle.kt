@@ -22,7 +22,7 @@ class SearchVerticle(private val baseUrl: String, private val depth: Int) : Abst
             Optional.empty(),
             baseUrl,
             crawler.getDescriptionFromPage(baseUrl),
-            crawler.getLinksFromAbstract(baseUrl).toSet(), entryNode = true
+            mutableSetOf(), entryNode = true
         )
         traverse(rootNode, depth)
     }
@@ -43,7 +43,7 @@ class SearchVerticle(private val baseUrl: String, private val depth: Int) : Abst
                     }
                 }
             } else {
-                vertx.eventBus().send("chanel.finish", "DONE")
+                println("Url not exist")
             }
         }
     }

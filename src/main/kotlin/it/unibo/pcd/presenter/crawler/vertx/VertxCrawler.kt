@@ -20,7 +20,13 @@ class VertxCrawler : Crawler {
         val codec = GenericCodec(WikiPage::class.java)
         vertx.eventBus().registerDefaultCodec(WikiPage::class.java, codec)
 
-        val rootNode = WikiPage(Optional.empty(), url, crawler.getDescriptionFromPage(url), crawler.getLinksFromAbstract(url).toSet(), entryNode = true)
+        val rootNode = WikiPage(
+            Optional.empty(),
+            url,
+            crawler.getDescriptionFromPage(url),
+            crawler.getLinksFromAbstract(url).toSet(),
+            entryNode = true
+        )
         graph.addVertex(rootNode)
         vertx.eventBus().consumer<WikiPage>("chanel.new-link") {
             it.body().parent.ifPresent { e ->
@@ -35,7 +41,6 @@ class VertxCrawler : Crawler {
         vertx.eventBus().consumer<String>("chanel.finish") {
             vertx.close()
             observable.onComplete()
-
         }
 
         vertx.deployVerticle(SearchVerticle(url, depth))
