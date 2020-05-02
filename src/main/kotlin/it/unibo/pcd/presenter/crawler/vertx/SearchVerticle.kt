@@ -24,7 +24,8 @@ class SearchVerticle(private val baseUrl: String, private val depth: Int) : Abst
             crawler.getDescriptionFromPage(baseUrl),
             mutableSetOf(), entryNode = true
         )
-        traverse(rootNode, depth)
+        if (depth > 0)
+            traverse(rootNode, depth)
     }
 
     private fun traverse(root: WikiPage, depth: Int) {
@@ -36,7 +37,15 @@ class SearchVerticle(private val baseUrl: String, private val depth: Int) : Abst
                 parsed.forEach { el ->
                     if (depth > 0) {
                         vertx.eventBus().send("chanel.search-links", "${root.baseURL}!$el|${depth - 1}")
-                        val node = WikiPage(Optional.of(root.baseURL), el, "", mutableSetOf())
+                        var par = ""
+                        WebClient.create(vertx).getAbs(normalizeUrlForDescription(el)).send { desc ->
+                            if (desc.succeeded()) {
+                                par = parser.parseForDescription(desc.result().body().toString())
+                            } else {
+                                println("Description not exist")
+                            }
+                        }
+                        val node = WikiPage(Optional.of(root.baseURL), el, par, mutableSetOf())
                         vertx.eventBus().send("chanel.new-link", node)
                     } else {
                         vertx.eventBus().send("chanel.finish", "DONE")
@@ -50,6 +59,11 @@ class SearchVerticle(private val baseUrl: String, private val depth: Int) : Abst
 
     private fun normalizeUrlForApi(url: String): String {
         val baseUrl = "https://it.wikipedia.org/api/rest_v1/page/html/"
+        return baseUrl + url.substringAfter("wiki/")
+    }
+
+    private fun normalizeUrlForDescription(url: String): String {
+        val baseUrl = "https://it.wikipedia.org/api/rest_v1/page/summary/"
         return baseUrl + url.substringAfter("wiki/")
     }
 
