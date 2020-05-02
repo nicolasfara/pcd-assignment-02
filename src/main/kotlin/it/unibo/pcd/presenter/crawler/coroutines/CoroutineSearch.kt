@@ -1,5 +1,6 @@
 package it.unibo.pcd.presenter.crawler.coroutines
 
+import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.processors.FlowableProcessor
 import io.reactivex.rxjava3.processors.PublishProcessor
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -27,7 +28,7 @@ class CoroutineSearch: Crawler {
     private val list = mutableListOf<WikiPage>()
 
     @ExperimentalStdlibApi
-    override fun crawl(url: String, depth: Int): FlowableProcessor<Set<WikiPage>> {
+    override fun crawl(url: String, depth: Int): Flowable<Set<WikiPage>> {
         CoroutineScope(Dispatchers.IO).launch {
             val root = WikiPage(Optional.empty(), url, crawler.getDescriptionFromPage(url), crawler.getLinksFromAbstract(url).toSet(), entryNode = true)
             graph.addVertex(root)

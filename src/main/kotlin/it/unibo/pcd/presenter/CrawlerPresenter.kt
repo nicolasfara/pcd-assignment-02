@@ -4,6 +4,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import it.unibo.pcd.contract.Contract
 import it.unibo.pcd.presenter.crawler.coroutines.CoroutineSearch
 import it.unibo.pcd.presenter.crawler.forkjoin.my.ForkJoinCrawler
+import it.unibo.pcd.presenter.crawler.rx.RxCrawler
 
 class CrawlerPresenter: Contract.Presenter {
 
@@ -33,6 +34,13 @@ class CrawlerPresenter: Contract.Presenter {
                     }
             }
             SearchStrategy.REACTIVE -> {
+                RxCrawler().crawl(url, depth)
+                    .onBackpressureBuffer(5_000) { println("Error") }
+                    .doOnComplete{ view.onFinishResult() }
+                    .subscribeOn(Schedulers.computation())
+                    .subscribe {
+                        view.displaySearchResult(it)
+                    }
                 /*RxSearch().crawl(url, depth, {
                     println("New Item")
                     view.displaySearchResult(it)

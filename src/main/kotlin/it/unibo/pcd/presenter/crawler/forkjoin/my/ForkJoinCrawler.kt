@@ -1,5 +1,6 @@
 package it.unibo.pcd.presenter.crawler.forkjoin.my
 
+import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.processors.FlowableProcessor
 import io.reactivex.rxjava3.processors.PublishProcessor
 import it.unibo.pcd.model.WikiPage
@@ -17,7 +18,7 @@ class ForkJoinCrawler: Crawler {
     private val graph = DirectedAcyclicGraph<WikiPage, DefaultEdge>(DefaultEdge::class.java)
     private val observable = PublishProcessor.create<Set<WikiPage>>().toSerialized()
 
-    override fun crawl(url: String, depth: Int): FlowableProcessor<Set<WikiPage>> {
+    override fun crawl(url: String, depth: Int): Flowable<Set<WikiPage>> {
         CompletableFuture.supplyAsync {
             val rootNode = WikiPage(Optional.empty(), url, crawler.getDescriptionFromPage(url), crawler.getLinksFromAbstract(url).toSet(), entryNode = true)
             graph.addVertex(rootNode)
