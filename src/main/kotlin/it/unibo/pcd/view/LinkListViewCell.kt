@@ -25,7 +25,9 @@ class LinkListViewCell : ListCell<WikiPage>() {
         } else {
             val grid = GridPane()
             baseUrl.text = wikiPage.baseURL.substringAfter("wiki/")
+            baseUrl.style = "-fx-font-weight: bold"
             description.text = wikiPage.description.take(takeCharDescription)
+            description.style = "-fx-font-style: italic"
             wikiPage.links.forEach { linkSet.add(it.substringAfter("wiki/")) }
             links.text = linkSet.toString()
 
