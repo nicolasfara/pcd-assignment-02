@@ -10,6 +10,9 @@ import it.unibo.pcd.presenter.crawler.vertx.VertxCrawler
 class CrawlerPresenter : Contract.Presenter {
 
     private lateinit var view: Contract.View
+    companion object {
+        private const val BUFFER_SIZE = 5_000
+    }
 
     @ExperimentalStdlibApi
     override fun startSearch(url: String, depth: Int, strategy: SearchStrategy) {
@@ -17,7 +20,7 @@ class CrawlerPresenter : Contract.Presenter {
         when (strategy) {
             SearchStrategy.COROUTINES -> {
                 CoroutineSearch().crawl(url, depth)
-                    .onBackpressureBuffer(5_000) { println("Backpressured") }
+                    .onBackpressureBuffer(BUFFER_SIZE) { println("Backpressured") }
                     .doOnComplete { view.onFinishResult() }
                     .subscribeOn(Schedulers.computation())
                     .subscribe {
@@ -26,18 +29,17 @@ class CrawlerPresenter : Contract.Presenter {
             }
             SearchStrategy.FORK_JOIN -> {
                 ForkJoinCrawler().crawl(url, depth)
-                    .onBackpressureBuffer(5_000) { println("Backpressure") }
+                    .onBackpressureBuffer(BUFFER_SIZE) { println("Backpressure") }
                     .subscribeOn(Schedulers.computation())
                     .doOnComplete { view.onFinishResult() }
                     .subscribe {
                         view.displaySearchResult(it)
-
                     }
             }
             SearchStrategy.REACTIVE -> {
                 RxCrawler().crawl(url, depth)
-                    .onBackpressureBuffer(5_000) { println("Error") }
-                    .doOnComplete{ view.onFinishResult() }
+                    .onBackpressureBuffer(BUFFER_SIZE) { println("Error") }
+                    .doOnComplete { view.onFinishResult() }
                     .subscribeOn(Schedulers.computation())
                     .subscribe {
                         view.displaySearchResult(it)
@@ -45,7 +47,7 @@ class CrawlerPresenter : Contract.Presenter {
             }
             SearchStrategy.VERTX -> {
                 VertxCrawler().crawl(url, depth)
-                    .onBackpressureBuffer(5_000) { println("Backpressure") }
+                    .onBackpressureBuffer(BUFFER_SIZE) { println("Backpressure") }
                     .subscribeOn(Schedulers.computation())
                     .doOnComplete { view.onFinishResult() }
                     .subscribe {

@@ -5,7 +5,7 @@ import io.vertx.ext.web.client.WebClient
 import it.unibo.pcd.model.WikiPage
 import it.unibo.pcd.presenter.crawler.network.WikiCrawler
 import it.unibo.pcd.presenter.crawler.network.WikiParserImpl
-import java.util.*
+import java.util.Optional
 
 class SearchVerticle(private val baseUrl: String, private val depth: Int) : AbstractVerticle() {
     private val parser = WikiParserImpl()
@@ -25,8 +25,9 @@ class SearchVerticle(private val baseUrl: String, private val depth: Int) : Abst
             crawler.getDescriptionFromPage(baseUrl),
             mutableSetOf(), entryNode = true
         )
-        if (depth > 0)
+        if (depth > 0) {
             traverse(rootNode, depth)
+        }
     }
 
     private fun traverse(root: WikiPage, depth: Int) {
@@ -53,10 +54,11 @@ class SearchVerticle(private val baseUrl: String, private val depth: Int) : Abst
     private fun clientDescription(elem: String): String {
         var response = " "
         WebClient.create(vertx).getAbs(prepareUrl(elem, apiDescription)).send { desc ->
-            if (desc.succeeded())
+            if (desc.succeeded()) {
                 response = parser.parseForDescription(desc.result().body().toString())
-            else
+            } else {
                 println("Description not exist")
+            }
         }
         return response
     }
@@ -64,6 +66,4 @@ class SearchVerticle(private val baseUrl: String, private val depth: Int) : Abst
     private fun prepareUrl(url: String, baseUrl: String): String {
         return baseUrl + url.substringAfter("wiki/")
     }
-
-
 }

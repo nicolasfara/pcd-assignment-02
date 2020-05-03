@@ -3,7 +3,7 @@ package it.unibo.pcd.presenter.crawler
 import it.unibo.pcd.model.WikiPage
 import org.jgrapht.Graph
 import org.jgrapht.graph.DefaultEdge
-import java.util.*
+import java.util.Optional
 
 object CrawlerUtility {
     fun addVertexToGraph(graph: Graph<WikiPage, DefaultEdge>, vertex: WikiPage): Optional<Set<WikiPage>> {
@@ -13,7 +13,7 @@ object CrawlerUtility {
             if (!graph.vertexSet().map { v -> v.baseURL }.contains(vertex.baseURL)) {
                 graph.addVertex(vertex)
                 graph.addEdge(parentNode, vertex)
-                ret =  Optional.of(HashSet(graph.vertexSet()))
+                ret = Optional.of(HashSet(graph.vertexSet()))
             }
         }
         return ret

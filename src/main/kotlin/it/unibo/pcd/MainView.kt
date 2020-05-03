@@ -6,13 +6,20 @@ import it.unibo.pcd.presenter.CrawlerPresenter
 import it.unibo.pcd.presenter.SearchStrategy
 import javafx.application.Platform
 import javafx.collections.FXCollections
-import javafx.scene.control.*
+import javafx.scene.control.Button
+import javafx.scene.control.ComboBox
+import javafx.scene.control.ProgressIndicator
+import javafx.scene.control.TextField
+import javafx.scene.control.ListView
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.StackPane
-import tornadofx.*
+import tornadofx.View
+import tornadofx.App
+import tornadofx.launch
+
 import kotlin.collections.HashSet
 
-class MainView: View("Wiki Link Search "), Contract.View {
+class MainView : View("Wiki Link Search "), Contract.View {
     override val root: BorderPane by fxml("/MainView.fxml")
     private val graphPane: StackPane by fxid()
     private val wikiUrl: TextField by fxid()
@@ -56,36 +63,16 @@ class MainView: View("Wiki Link Search "), Contract.View {
 
     private fun onStartSearch() {
         progress.isVisible = true
-        //graphPane.isDisable = true
         searchBtn.isDisable = true
     }
 
     private fun onFinishSearch() {
         progress.isVisible = false
-        //graphPane.isDisable = false
         searchBtn.isDisable = false
     }
-
-    /*@Synchronized private fun buildTreeView(graph: Set<WikiPage>): TreeView<String> {
-        val treeItem: TreeItem<String> = TreeItem()
-        val copyGraph = AsSynchronizedGraph.Builder<WikiPage, DefaultEdge>().build(graph)
-        val entryNode = HashSet(copyGraph.vertexSet())
-        graphToTree(graph, graph.find { it.entryNode }!!, treeItem)
-        return TreeView(treeItem)
-    }
-
-    private fun graphToTree(graph: Graph<WikiPage, DefaultEdge>, vertex: WikiPage, parent: TreeItem<String>) {
-        if (Graphs.successorListOf(graph, vertex).isNotEmpty()) {
-            val treeItem: TreeItem<String> = TreeItem(vertex.baseURL)
-            parent.children.add(treeItem)
-            Graphs.successorListOf(graph, vertex).forEach { graphToTree(graph, it, treeItem) }
-        } else {
-            parent.children.add(TreeItem(vertex.baseURL))
-        }
-    }*/
 }
 
-class MyApp: App(MainView::class)
+class MyApp : App(MainView::class)
 
 fun main(args: Array<String>) {
     launch<MyApp>(args)

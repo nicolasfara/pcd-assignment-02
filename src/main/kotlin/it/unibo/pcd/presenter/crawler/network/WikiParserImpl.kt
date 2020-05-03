@@ -4,7 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import org.jsoup.Jsoup
 
-class WikiParserImpl: WikiParser {
+class WikiParserImpl : WikiParser {
 
     private val jsonParser = Gson()
     private val baseWikiUrl = "https://it.wikipedia.org/wiki/"

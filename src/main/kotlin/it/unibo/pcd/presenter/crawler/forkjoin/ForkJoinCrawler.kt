@@ -8,18 +8,24 @@ import it.unibo.pcd.presenter.crawler.Crawler
 import it.unibo.pcd.presenter.crawler.network.WikiCrawler
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.DirectedAcyclicGraph
-import java.util.*
+import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ForkJoinPool
 
-class ForkJoinCrawler: Crawler {
+class ForkJoinCrawler : Crawler {
     private val crawler = WikiCrawler()
     private val graph = DirectedAcyclicGraph<WikiPage, DefaultEdge>(DefaultEdge::class.java)
     private val observable = PublishProcessor.create<Set<WikiPage>>().toSerialized()
 
     override fun crawl(url: String, depth: Int): Flowable<Set<WikiPage>> {
         CompletableFuture.supplyAsync {
-            val rootNode = WikiPage(Optional.empty(), url, crawler.getDescriptionFromPage(url), crawler.getLinksFromAbstract(url).toSet(), entryNode = true)
+            val rootNode = WikiPage(
+                Optional.empty(),
+                url,
+                crawler.getDescriptionFromPage(url),
+                crawler.getLinksFromAbstract(url).toSet(),
+                entryNode = true
+            )
             graph.addVertex(rootNode)
 
             val fj = ForkJoinLinksSearch(rootNode, depth, crawler)

@@ -10,7 +10,7 @@ import it.unibo.pcd.presenter.crawler.Crawler
 import it.unibo.pcd.presenter.crawler.network.WikiCrawler
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.SimpleDirectedGraph
-import java.util.*
+import java.util.Optional
 
 class VertxCrawler : Crawler {
     private val vertx = Vertx.vertx()

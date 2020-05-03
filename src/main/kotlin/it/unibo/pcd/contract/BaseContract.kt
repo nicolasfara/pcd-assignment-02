@@ -5,5 +5,5 @@ class BaseContract {
         fun attachView(view: T)
     }
 
-    interface View { }
+    interface View
 }

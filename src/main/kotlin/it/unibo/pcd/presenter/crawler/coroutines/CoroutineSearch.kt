@@ -6,14 +6,20 @@ import it.unibo.pcd.model.WikiPage
 import it.unibo.pcd.presenter.crawler.CrawlerUtility
 import it.unibo.pcd.presenter.crawler.Crawler
 import it.unibo.pcd.presenter.crawler.network.WikiCrawler
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.DirectedAcyclicGraph
-import java.util.*
+import java.util.Optional
 import kotlin.collections.ArrayDeque
 
-class CoroutineSearch: Crawler {
+class CoroutineSearch : Crawler {
 
     private val graph = DirectedAcyclicGraph<WikiPage, DefaultEdge>(DefaultEdge::class.java)
     private val crawler: WikiCrawler = WikiCrawler()
@@ -23,7 +29,13 @@ class CoroutineSearch: Crawler {
     @ExperimentalStdlibApi
     override fun crawl(url: String, depth: Int): Flowable<Set<WikiPage>> {
         CoroutineScope(Dispatchers.IO).launch {
-            val root = WikiPage(Optional.empty(), url, crawler.getDescriptionFromPage(url), crawler.getLinksFromAbstract(url).toSet(), entryNode = true)
+            val root = WikiPage(
+                Optional.empty(),
+                url,
+                crawler.getDescriptionFromPage(url),
+                crawler.getLinksFromAbstract(url).toSet(),
+                entryNode = true
+            )
             graph.addVertex(root)
             iterativeSearch(root, depth).collect {
                 CrawlerUtility.addVertexToGraph(graph, it)
@@ -54,7 +66,12 @@ class CoroutineSearch: Crawler {
             }
 
             node.links.parallelStream().forEach {
-                queue.add(WikiPage(Optional.of(node.baseURL), it, crawler.getDescriptionFromPage(it), crawler.getLinksFromAbstract(it).toSet()))
+                queue.add(WikiPage(
+                    Optional.of(node.baseURL),
+                    it,
+                    crawler.getDescriptionFromPage(it),
+                    crawler.getLinksFromAbstract(it).toSet()
+                ))
             }
         }
     }
@@ -82,8 +99,6 @@ class CoroutineSearch: Crawler {
                     }
             }
             else -> {
-                //list.add(rootPage)
-                //list
             }
         }
     }
