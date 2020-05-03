@@ -10,15 +10,15 @@ class LinkListViewCell : ListCell<WikiPage>() {
     private val baseUrl = Label()
     private val description = Label()
     private val links = Label()
-    private var col = 0
-    private var firstRow = 0
-    private var secondRow = 1
-    private var thirdRow = 2
 
     private val linkSet = mutableSetOf<String>()
 
     companion object {
         private const val DESCRIPTION_LENGTH = 100
+        private const val COL = 0
+        private const val FIRST_ROW = 0
+        private const val SECOND_ROW = 1
+        private const val THIRD_ROW = 2
     }
 
     override fun updateItem(wikiPage: WikiPage?, empty: Boolean) {
@@ -35,9 +35,9 @@ class LinkListViewCell : ListCell<WikiPage>() {
             wikiPage.links.forEach { linkSet.add(it.substringAfter("wiki/")) }
             links.text = linkSet.toString()
 
-            grid.add(baseUrl, col, firstRow)
-            grid.add(description, col, secondRow)
-            grid.add(links, col, thirdRow)
+            grid.add(baseUrl, COL, FIRST_ROW)
+            grid.add(description, COL, SECOND_ROW)
+            grid.add(links, COL, THIRD_ROW)
             graphic = grid
         }
     }
