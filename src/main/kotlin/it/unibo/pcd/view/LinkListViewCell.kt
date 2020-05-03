@@ -14,8 +14,12 @@ class LinkListViewCell : ListCell<WikiPage>() {
     private var firstRow = 0
     private var secondRow = 1
     private var thirdRow = 2
-    private var takeCharDescription = 100
+
     private val linkSet = mutableSetOf<String>()
+
+    companion object {
+        private const val DESCRIPTION_LENGTH = 100
+    }
 
     override fun updateItem(wikiPage: WikiPage?, empty: Boolean) {
         super.updateItem(wikiPage, empty)
@@ -26,7 +30,7 @@ class LinkListViewCell : ListCell<WikiPage>() {
             val grid = GridPane()
             baseUrl.text = wikiPage.baseURL.substringAfter("wiki/")
             baseUrl.style = "-fx-font-weight: bold"
-            description.text = wikiPage.description.take(takeCharDescription)
+            description.text = wikiPage.description.take(DESCRIPTION_LENGTH)
             description.style = "-fx-font-style: italic"
             wikiPage.links.forEach { linkSet.add(it.substringAfter("wiki/")) }
             links.text = linkSet.toString()
