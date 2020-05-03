@@ -8,8 +8,8 @@
 
 <?import javafx.geometry.Insets?>
 <BorderPane xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      prefHeight="400.0" prefWidth="600.0">
+            xmlns:fx="http://javafx.com/fxml"
+            prefHeight="400.0" prefWidth="600.0">
 
     <top>
         <HBox spacing="10">
@@ -19,13 +19,14 @@
 
             <Button fx:id="searchBtn" text="Search" onAction="#search"/>
             <TextField fx:id="wikiUrl" text="Wiki"/>
-            <TextField fx:id="depth" text="Depth" />
-            <ComboBox fx:id="combo" />
+            <TextField fx:id="depth" text="Depth"/>
+            <ComboBox fx:id="combo"/>
             <ProgressIndicator fx:id="progress" visible="false" prefHeight="20"/>
         </HBox>
     </top>
 
     <center>
-        <StackPane fx:id="graphPane" />
+        <ListView fx:id="listView" layoutX="26.0" layoutY="86.0" prefHeight="200.0" prefWidth="590.0" />
     </center>
+
 </BorderPane>
