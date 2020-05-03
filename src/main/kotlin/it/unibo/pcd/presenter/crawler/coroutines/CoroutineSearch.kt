@@ -1,22 +1,15 @@
 package it.unibo.pcd.presenter.crawler.coroutines
 
 import io.reactivex.rxjava3.core.Flowable
-import io.reactivex.rxjava3.processors.FlowableProcessor
 import io.reactivex.rxjava3.processors.PublishProcessor
-import io.reactivex.rxjava3.schedulers.Schedulers
-import io.reactivex.rxjava3.subjects.PublishSubject
 import it.unibo.pcd.model.WikiPage
+import it.unibo.pcd.presenter.crawler.CrawlerUtility
 import it.unibo.pcd.presenter.crawler.Crawler
 import it.unibo.pcd.presenter.crawler.network.WikiCrawler
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import org.jgrapht.Graph
-import org.jgrapht.graph.AsUnmodifiableGraph
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.DirectedAcyclicGraph
-import org.jgrapht.graph.concurrent.AsSynchronizedGraph
-import tornadofx.runAsync
-import java.lang.IllegalArgumentException
 import java.util.*
 import kotlin.collections.ArrayDeque
 
@@ -33,14 +26,8 @@ class CoroutineSearch: Crawler {
             val root = WikiPage(Optional.empty(), url, crawler.getDescriptionFromPage(url), crawler.getLinksFromAbstract(url).toSet(), entryNode = true)
             graph.addVertex(root)
             iterativeSearch(root, depth).collect {
-                it.parent.ifPresent { e ->
-                    val parentNode = graph.vertexSet().find { v -> v.baseURL == e }
-                    if (!graph.vertexSet().map { v -> v.baseURL }.contains(it.baseURL)) {
-                        graph.addVertex(it)
-                        graph.addEdge(parentNode, it)
-                        observable.onNext(HashSet(graph.vertexSet()))
-                    }
-                }
+                CrawlerUtility.addVertexToGraph(graph, it)
+                    .ifPresent { s -> observable.onNext(s) }
             }
             observable.onComplete()
         }

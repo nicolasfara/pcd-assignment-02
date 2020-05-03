@@ -5,6 +5,7 @@ import io.reactivex.rxjava3.processors.FlowableProcessor
 import io.reactivex.rxjava3.processors.PublishProcessor
 import io.vertx.core.Vertx
 import it.unibo.pcd.model.WikiPage
+import it.unibo.pcd.presenter.crawler.CrawlerUtility
 import it.unibo.pcd.presenter.crawler.Crawler
 import it.unibo.pcd.presenter.crawler.network.WikiCrawler
 import org.jgrapht.graph.DefaultEdge
@@ -29,14 +30,8 @@ class VertxCrawler : Crawler {
         )
         graph.addVertex(rootNode)
         vertx.eventBus().consumer<WikiPage>("chanel.new-link") {
-            it.body().parent.ifPresent { e ->
-                val parentNode = graph.vertexSet().find { v -> v.baseURL == e }
-                if (!graph.vertexSet().map { v -> v.baseURL }.contains(it.body().baseURL)) {
-                    graph.addVertex(it.body())
-                    graph.addEdge(parentNode, it.body())
-                    observable.onNext(HashSet(graph.vertexSet()))
-                }
-            }
+            CrawlerUtility.addVertexToGraph(graph, it.body())
+                .ifPresent { s -> observable.onNext(s) }
         }
         vertx.eventBus().consumer<String>("chanel.finish") {
             vertx.close()
