@@ -8,7 +8,8 @@ import java.util.concurrent.RecursiveTask
 class ForkJoinLinksSearch(
     private val rootPage: WikiPage,
     private val depth: Int,
-    private val crawler: WikiCrawler
+    private val crawler: WikiCrawler,
+    private val onNewPage: (WikiPage) -> Unit
 ) : RecursiveTask<Collection<WikiPage>>() {
 
     override fun compute(): Collection<WikiPage> {
@@ -25,11 +26,13 @@ class ForkJoinLinksSearch(
                     )
                 }
                 .forEach {
+                    onNewPage(it)
                     list.add(it)
                     val ele = ForkJoinLinksSearch(
                         it,
                         depth - 1,
-                        crawler
+                        crawler,
+                        onNewPage
                     )
                     ele.fork()
                     taskList.add(ele)
