@@ -1,10 +1,6 @@
 package it.unibo.pcd.presenter.crawler.coroutines
 
-import io.reactivex.rxjava3.core.Flowable
-import io.reactivex.rxjava3.processors.PublishProcessor
 import it.unibo.pcd.model.WikiPage
-import it.unibo.pcd.presenter.crawler.CrawlerUtility
-import it.unibo.pcd.presenter.crawler.Crawler
 import it.unibo.pcd.presenter.crawler.network.WikiCrawler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
@@ -19,15 +15,19 @@ import org.jgrapht.graph.DirectedAcyclicGraph
 import java.util.Optional
 import kotlin.collections.ArrayDeque
 
-class CoroutineSearch : Crawler {
+class CoroutineSearch {
 
     private val graph = DirectedAcyclicGraph<WikiPage, DefaultEdge>(DefaultEdge::class.java)
     private val crawler: WikiCrawler = WikiCrawler()
-    private val observable = PublishProcessor.create<Set<WikiPage>>().toSerialized()
     private val list = mutableListOf<WikiPage>()
 
     @ExperimentalStdlibApi
-    override fun crawl(url: String, depth: Int): Flowable<Set<WikiPage>> {
+    fun crawl(
+        url: String,
+        depth: Int,
+        onNewElement: (Set<WikiPage>) -> Unit,
+        onFinish: () -> Unit
+    ) {
         CoroutineScope(Dispatchers.IO).launch {
             val root = WikiPage(
                 Optional.empty(),
@@ -38,12 +38,15 @@ class CoroutineSearch : Crawler {
             )
             graph.addVertex(root)
             iterativeSearch(root, depth).collect {
-                CrawlerUtility.addVertexToGraph(graph, it)
-                    .ifPresent { s -> observable.onNext(s) }
+                it.parent.ifPresent { o ->
+                    val parentNode = graph.vertexSet().find { v -> v.baseURL == o }
+                    graph.addVertex(it)
+                    graph.addEdge(parentNode, it)
+                    onNewElement(HashSet(graph.vertexSet()))
+                }
             }
-            observable.onComplete()
+            onFinish()
         }
-        return observable
     }
 
     @ExperimentalStdlibApi

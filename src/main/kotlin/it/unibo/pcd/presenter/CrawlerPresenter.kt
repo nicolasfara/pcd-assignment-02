@@ -19,13 +19,11 @@ class CrawlerPresenter : Contract.Presenter {
         println("URL: $url DEPTH: $depth STRATEGY: $strategy")
         when (strategy) {
             SearchStrategy.COROUTINES -> {
-                CoroutineSearch().crawl(url, depth)
-                    .onBackpressureBuffer(BUFFER_SIZE) { println("Backpressured") }
-                    .doOnComplete { view.onFinishResult() }
-                    .subscribeOn(Schedulers.computation())
-                    .subscribe {
-                        view.displaySearchResult(it)
-                    }
+                CoroutineSearch().crawl(url, depth, {
+                    view.displaySearchResult(it)
+                }, {
+                    view.onFinishResult()
+                })
             }
             SearchStrategy.FORK_JOIN -> {
                 ForkJoinCrawler().crawl(url, depth, {
