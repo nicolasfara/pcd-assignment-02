@@ -42,13 +42,11 @@ class CrawlerPresenter : Contract.Presenter {
                     }
             }
             SearchStrategy.VERTX -> {
-                VertxCrawler().crawl(url, depth)
-                    .onBackpressureBuffer(BUFFER_SIZE) { println("Backpressure") }
-                    .subscribeOn(Schedulers.computation())
-                    .doOnComplete { view.onFinishResult() }
-                    .subscribe {
-                        view.displaySearchResult(it)
-                    }
+                VertxCrawler().crawl(url, depth, {
+                    view.displaySearchResult(it)
+                }, {
+                    view.onFinishResult()
+                })
             }
         }
     }
