@@ -5,11 +5,13 @@ import it.unibo.pcd.presenter.SearchStrategy
 
 interface Contract {
     interface View : BaseContract.View {
-        fun displaySearchResult(vertex: Set<WikiPage>)
+        fun displaySearchResult(vertex: WikiPage)
+        fun displayGraphSize(size: Int)
         fun onFinishResult()
     }
 
     interface Presenter : BaseContract.Presenter<View> {
         fun startSearch(url: String, depth: Int, strategy: SearchStrategy)
+        fun clearGraph()
     }
 }

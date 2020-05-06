@@ -11,9 +11,8 @@ import java.util.concurrent.ForkJoinPool
 
 class ForkJoinCrawler : Crawler.BasicCrawler {
     private val crawler = WikiCrawler()
-    private val graph = DirectedAcyclicGraph<WikiPage, DefaultEdge>(DefaultEdge::class.java)
 
-    override fun crawl(url: String, depth: Int, onNewPage: (Set<WikiPage>) -> Unit, onFinish: () -> Unit) {
+    override fun crawl(url: String, depth: Int, onNewPage: (WikiPage) -> Unit, onFinish: () -> Unit) {
         CompletableFuture.supplyAsync {
             val rootNode = WikiPage(
                 Optional.empty(),
@@ -22,13 +21,10 @@ class ForkJoinCrawler : Crawler.BasicCrawler {
                 crawler.getLinksFromAbstract(url).toSet(),
                 entryNode = true
             )
-            graph.addVertex(rootNode)
+            onNewPage(rootNode)
 
             val fj = ForkJoinLinksSearch(rootNode, depth, crawler) {
-                val parentNode = graph.vertexSet().find { v -> v.baseURL == it.parent.get() }
-                graph.addVertex(it)
-                graph.addEdge(parentNode, it)
-                onNewPage(HashSet(graph.vertexSet()))
+                onNewPage(it)
             }
             ForkJoinPool().invoke(fj)
         }.thenAccept { onFinish() }

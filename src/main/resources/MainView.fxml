@@ -9,7 +9,7 @@
 <?import javafx.geometry.Insets?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            prefHeight="400.0" prefWidth="600.0">
+            prefHeight="540.0" prefWidth="960.0">
 
     <top>
         <HBox spacing="10">
@@ -22,6 +22,7 @@
             <TextField fx:id="depth" text="Depth"/>
             <ComboBox fx:id="combo"/>
             <ProgressIndicator fx:id="progress" visible="false" prefHeight="20"/>
+            <Label fx:id="graphSize" text="Graph size:"/>
         </HBox>
     </top>
 

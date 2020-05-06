@@ -15,10 +15,10 @@ import kotlin.collections.HashSet
 class FlowableRxCrawler : Crawler.RxCrawler {
 
     private val observable = PublishProcessor.create<Set<WikiPage>>().toSerialized()
-    private val graph = DirectedAcyclicGraph<WikiPage, DefaultEdge>(DefaultEdge::class.java)
+    //private val graph = DirectedAcyclicGraph<WikiPage, DefaultEdge>(DefaultEdge::class.java)
     private val crawler = WikiCrawler()
 
-    override fun crawl(url: String, depth: Int): Flowable<Set<WikiPage>> {
+    override fun crawl(url: String, depth: Int): Flowable<WikiPage> {
         val rootNode = WikiPage(
             Optional.empty(),
             url,
@@ -26,14 +26,8 @@ class FlowableRxCrawler : Crawler.RxCrawler {
             crawler.getLinksFromAbstract(url).toSet(),
             entryNode = true
         )
-        graph.addVertex(rootNode)
+
         return searchLinks(rootNode, depth)
-            .doOnEach {
-                if (it.value != null) {
-                    CrawlerUtility.addVertexToGraph(graph, it.value)
-                        .ifPresent { s -> observable.onNext(s) }
-                }
-            }.map { HashSet(graph.vertexSet()) }
     }
 
     private fun searchLinks(root: WikiPage, depth: Int): Flowable<WikiPage> {

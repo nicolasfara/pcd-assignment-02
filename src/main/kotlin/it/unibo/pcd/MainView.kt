@@ -7,11 +7,7 @@ import it.unibo.pcd.presenter.SearchStrategy
 import it.unibo.pcd.view.LinkListViewCell
 import javafx.application.Platform
 import javafx.collections.FXCollections
-import javafx.scene.control.Button
-import javafx.scene.control.ComboBox
-import javafx.scene.control.ProgressIndicator
-import javafx.scene.control.TextField
-import javafx.scene.control.ListView
+import javafx.scene.control.*
 import javafx.scene.layout.BorderPane
 import tornadofx.App
 import tornadofx.View
@@ -24,6 +20,7 @@ class MainView : View("Wiki Link Search "), Contract.View {
     private val progress: ProgressIndicator by fxid()
     private val searchBtn: Button by fxid()
     private val combo: ComboBox<SearchStrategy> by fxid()
+    private val graphSize: Label by fxid()
     private val itemsList = FXCollections.observableArrayList<WikiPage>()
     private val listView: ListView<WikiPage> by fxid()
     private val presenter: CrawlerPresenter
@@ -36,10 +33,15 @@ class MainView : View("Wiki Link Search "), Contract.View {
         presenter.attachView(this)
     }
 
-    override fun displaySearchResult(vertex: Set<WikiPage>) {
+    override fun displaySearchResult(vertex: WikiPage) {
         Platform.runLater {
-            itemsList.clear()
-            itemsList.addAll(vertex)
+            itemsList.add(vertex)
+        }
+    }
+
+    override fun displayGraphSize(size: Int) {
+        Platform.runLater {
+            graphSize.text = "Graph size: $size"
         }
     }
 
@@ -52,6 +54,7 @@ class MainView : View("Wiki Link Search "), Contract.View {
     @ExperimentalStdlibApi
     fun search() {
         itemsList.clear()
+        presenter.clearGraph()
         onStartSearch()
         presenter.startSearch(wikiUrl.text, depth.text.toInt(), combo.value)
     }

@@ -18,7 +18,6 @@ import kotlin.collections.ArrayDeque
 
 class CoroutineSearch : Crawler.BasicCrawler {
 
-    private val graph = DirectedAcyclicGraph<WikiPage, DefaultEdge>(DefaultEdge::class.java)
     private val crawler: WikiCrawler = WikiCrawler()
     private val list = mutableListOf<WikiPage>()
 
@@ -26,7 +25,7 @@ class CoroutineSearch : Crawler.BasicCrawler {
     override fun crawl(
         url: String,
         depth: Int,
-        onNewPage: (Set<WikiPage>) -> Unit,
+        onNewPage: (WikiPage) -> Unit,
         onFinish: () -> Unit
     ) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -37,14 +36,9 @@ class CoroutineSearch : Crawler.BasicCrawler {
                 crawler.getLinksFromAbstract(url).toSet(),
                 entryNode = true
             )
-            graph.addVertex(root)
+
             iterativeSearch(root, depth).collect {
-                it.parent.ifPresent { o ->
-                    val parentNode = graph.vertexSet().find { v -> v.baseURL == o }
-                    graph.addVertex(it)
-                    graph.addEdge(parentNode, it)
-                    onNewPage(HashSet(graph.vertexSet()))
-                }
+                onNewPage(it)
             }
             onFinish()
         }
