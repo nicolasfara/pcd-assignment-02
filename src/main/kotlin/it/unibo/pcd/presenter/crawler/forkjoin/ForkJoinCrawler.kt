@@ -3,8 +3,6 @@ package it.unibo.pcd.presenter.crawler.forkjoin
 import it.unibo.pcd.model.WikiPage
 import it.unibo.pcd.presenter.crawler.Crawler
 import it.unibo.pcd.presenter.crawler.network.WikiCrawler
-import org.jgrapht.graph.DefaultEdge
-import org.jgrapht.graph.DirectedAcyclicGraph
 import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ForkJoinPool

@@ -7,7 +7,12 @@ import it.unibo.pcd.presenter.SearchStrategy
 import it.unibo.pcd.view.LinkListViewCell
 import javafx.application.Platform
 import javafx.collections.FXCollections
-import javafx.scene.control.*
+import javafx.scene.control.Button
+import javafx.scene.control.ComboBox
+import javafx.scene.control.ProgressIndicator
+import javafx.scene.control.TextField
+import javafx.scene.control.Label
+import javafx.scene.control.ListView
 import javafx.scene.layout.BorderPane
 import tornadofx.App
 import tornadofx.View
