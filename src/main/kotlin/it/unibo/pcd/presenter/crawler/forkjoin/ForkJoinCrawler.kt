@@ -1,6 +1,7 @@
 package it.unibo.pcd.presenter.crawler.forkjoin
 
 import it.unibo.pcd.model.WikiPage
+import it.unibo.pcd.presenter.crawler.Crawler
 import it.unibo.pcd.presenter.crawler.network.WikiCrawler
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.DirectedAcyclicGraph
@@ -8,11 +9,11 @@ import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ForkJoinPool
 
-class ForkJoinCrawler {
+class ForkJoinCrawler : Crawler.BasicCrawler {
     private val crawler = WikiCrawler()
     private val graph = DirectedAcyclicGraph<WikiPage, DefaultEdge>(DefaultEdge::class.java)
 
-    fun crawl(url: String, depth: Int, onNewPage: (Set<WikiPage>) -> Unit, onFinish: () -> Unit) {
+    override fun crawl(url: String, depth: Int, onNewPage: (Set<WikiPage>) -> Unit, onFinish: () -> Unit) {
         CompletableFuture.supplyAsync {
             val rootNode = WikiPage(
                 Optional.empty(),

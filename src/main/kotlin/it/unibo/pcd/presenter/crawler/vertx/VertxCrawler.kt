@@ -3,17 +3,19 @@ package it.unibo.pcd.presenter.crawler.vertx
 import GenericCodec
 import io.vertx.core.Vertx
 import it.unibo.pcd.model.WikiPage
+import it.unibo.pcd.presenter.crawler.Crawler
 import it.unibo.pcd.presenter.crawler.CrawlerUtility
 import it.unibo.pcd.presenter.crawler.network.WikiCrawler
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.graph.SimpleDirectedGraph
 import java.util.Optional
 
-class VertxCrawler {
+class VertxCrawler : Crawler.BasicCrawler {
     private val vertx = Vertx.vertx()
     private val graph = SimpleDirectedGraph<WikiPage, DefaultEdge>(DefaultEdge::class.java)
     private val crawler = WikiCrawler()
-    fun crawl(url: String, depth: Int, onNewPage: (Set<WikiPage>) -> Unit, onFinish: () -> Unit) {
+
+    override fun crawl(url: String, depth: Int, onNewPage: (Set<WikiPage>) -> Unit, onFinish: () -> Unit) {
         val codec = GenericCodec(WikiPage::class.java)
         vertx.eventBus().registerDefaultCodec(WikiPage::class.java, codec)
 

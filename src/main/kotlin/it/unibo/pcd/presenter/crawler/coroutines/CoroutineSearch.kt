@@ -1,6 +1,7 @@
 package it.unibo.pcd.presenter.crawler.coroutines
 
 import it.unibo.pcd.model.WikiPage
+import it.unibo.pcd.presenter.crawler.Crawler
 import it.unibo.pcd.presenter.crawler.network.WikiCrawler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
@@ -15,17 +16,17 @@ import org.jgrapht.graph.DirectedAcyclicGraph
 import java.util.Optional
 import kotlin.collections.ArrayDeque
 
-class CoroutineSearch {
+class CoroutineSearch : Crawler.BasicCrawler {
 
     private val graph = DirectedAcyclicGraph<WikiPage, DefaultEdge>(DefaultEdge::class.java)
     private val crawler: WikiCrawler = WikiCrawler()
     private val list = mutableListOf<WikiPage>()
 
     @ExperimentalStdlibApi
-    fun crawl(
+    override fun crawl(
         url: String,
         depth: Int,
-        onNewElement: (Set<WikiPage>) -> Unit,
+        onNewPage: (Set<WikiPage>) -> Unit,
         onFinish: () -> Unit
     ) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -42,7 +43,7 @@ class CoroutineSearch {
                     val parentNode = graph.vertexSet().find { v -> v.baseURL == o }
                     graph.addVertex(it)
                     graph.addEdge(parentNode, it)
-                    onNewElement(HashSet(graph.vertexSet()))
+                    onNewPage(HashSet(graph.vertexSet()))
                 }
             }
             onFinish()

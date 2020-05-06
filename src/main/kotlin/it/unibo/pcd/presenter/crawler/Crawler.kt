@@ -4,5 +4,11 @@ import io.reactivex.rxjava3.core.Flowable
 import it.unibo.pcd.model.WikiPage
 
 interface Crawler {
-    fun crawl(url: String, depth: Int): Flowable<Set<WikiPage>>
+    interface BasicCrawler {
+        fun crawl(url: String, depth: Int, onNewPage: (Set<WikiPage>) -> Unit, onFinish: () -> Unit)
+    }
+
+    interface RxCrawler {
+        fun crawl(url: String, depth: Int): Flowable<Set<WikiPage>>
+    }
 }
