@@ -1,6 +1,6 @@
 package it.unibo.pcd.contract
 
-class BaseContract {
+interface BaseContract {
     interface Presenter<in T> {
         fun attachView(view: T)
     }
