@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import java.util.Optional
 import kotlin.collections.ArrayDeque
 
-class CoroutineSearch : Crawler.BasicCrawler {
+class CoroutineCrawler : Crawler.BasicCrawler {
 
     private val crawler: WikiCrawler = WikiCrawler()
     private val list = mutableListOf<WikiPage>()

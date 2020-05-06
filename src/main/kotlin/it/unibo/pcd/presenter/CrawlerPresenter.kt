@@ -3,7 +3,7 @@ package it.unibo.pcd.presenter
 import io.reactivex.rxjava3.schedulers.Schedulers
 import it.unibo.pcd.contract.Contract
 import it.unibo.pcd.model.WikiGraph
-import it.unibo.pcd.presenter.crawler.coroutines.CoroutineSearch
+import it.unibo.pcd.presenter.crawler.coroutines.CoroutineCrawler
 import it.unibo.pcd.presenter.crawler.forkjoin.ForkJoinCrawler
 import it.unibo.pcd.presenter.crawler.rx.FlowableRxCrawler
 import it.unibo.pcd.presenter.crawler.vertx.VertxCrawler
@@ -22,7 +22,7 @@ class CrawlerPresenter : Contract.Presenter {
         println("URL: $url DEPTH: $depth STRATEGY: $strategy")
         when (strategy) {
             SearchStrategy.COROUTINES -> {
-                CoroutineSearch().crawl(url, depth, {
+                CoroutineCrawler().crawl(url, depth, {
                     graph.addVertex(it)
                     view.displaySearchResult(it)
                 }, {
