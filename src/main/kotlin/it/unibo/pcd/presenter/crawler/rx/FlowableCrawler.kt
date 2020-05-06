@@ -12,7 +12,7 @@ import org.jgrapht.graph.DirectedAcyclicGraph
 import java.util.Optional
 import kotlin.collections.HashSet
 
-class RxCrawler : Crawler {
+class FlowableCrawler : Crawler {
 
     private val observable = PublishProcessor.create<Set<WikiPage>>().toSerialized()
     private val graph = DirectedAcyclicGraph<WikiPage, DefaultEdge>(DefaultEdge::class.java)
