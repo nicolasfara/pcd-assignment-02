@@ -3,14 +3,8 @@ package it.unibo.pcd.presenter.crawler.coroutines
 import it.unibo.pcd.model.WikiPage
 import it.unibo.pcd.presenter.crawler.Crawler
 import it.unibo.pcd.presenter.crawler.network.WikiCrawler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import java.util.Optional
 import kotlin.collections.ArrayDeque
 
@@ -35,7 +29,14 @@ class CoroutineCrawler : Crawler.BasicCrawler {
                 entryNode = true
             )
 
-            iterativeSearch(root, depth).collect {
+            val f = flow {
+                emit("Hello")
+            }
+
+            /*recursiveSearch(root, depth).flowOn(Dispatchers.IO).collect {
+                onNewPage(it)
+            }*/
+            iterativeSearch(root, depth).flowOn(Dispatchers.IO).collect {
                 onNewPage(it)
             }
             onFinish()
@@ -61,18 +62,26 @@ class CoroutineCrawler : Crawler.BasicCrawler {
                 nextElementsToDepthIncrease = 0
             }
 
-            node.links.parallelStream().forEach {
-                queue.add(WikiPage(
-                    Optional.of(node.baseURL),
-                    it,
-                    crawler.getDescriptionFromPage(it),
-                    crawler.getLinksFromAbstract(it).toSet()
-                ))
+            coroutineScope {
+                node.links
+                    .forEach {
+                        async {
+                            queue.add(
+                                WikiPage(
+                                    Optional.of(node.baseURL),
+                                    it,
+                                    crawler.getDescriptionFromPage(it),
+                                    crawler.getLinksFromAbstract(it).toSet()
+                                )
+                            )
+                        }
+                    }
             }
         }
     }
 
-    private suspend fun recursiveSearch(rootPage: WikiPage, depth: Int): Unit = coroutineScope {
+    @FlowPreview
+    private suspend fun recursiveSearch(rootPage: WikiPage, depth: Int): Flow<WikiPage> = coroutineScope {
         return@coroutineScope when {
             depth > 0 -> {
                 rootPage.links
@@ -88,14 +97,12 @@ class CoroutineCrawler : Crawler.BasicCrawler {
                         }
                     }
                     .map { it.await() }
-                    .forEach {
-                        list.add(it)
-                        val node = it
-                        recursiveSearch(node, depth - 1)
+                    .flatMap {
+                        recursiveSearch(it, depth - 1).toList()
                     }
+                    .asFlow()
             }
-            else -> {
-            }
+            else -> { flowOf() }
         }
     }
 }
